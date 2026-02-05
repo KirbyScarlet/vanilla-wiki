@@ -174,5 +174,5 @@ cython_debug/
 .pypirc
 
 # 
-static/js/bootstrap.bundle.min.js
-static/css/bootstrap.min.css
+static/js/bootstrap*
+static/css/bootstrap*
