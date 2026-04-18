@@ -1,0 +1,21 @@
+
+env: "prod"  # "dev" "prod"
+debug: false
+
+host: "0.0.0.0"
+port: 8085
+data_dir: "docs"
+max_file_size: 0
+buffer_size: 65536  # 64M
+
+# 可能用到的ai接口，暂时只写个这个
+ollama_url: "http://localhost:11434"
+
+admin_enable: true
+admin_totp_secret: "vanilla"
+admin_bypass_auth: false
+
+icp_host:
+  - "vanilla.wiki"
+icp_number: "苏ICP备2026007004号-1"
+public_security: ""

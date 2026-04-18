@@ -1,2 +1,5 @@
 title: 数学类
-description: 一些解过的题
+description:  算不出ta所想
+uri: /math
+category:
+  - latex-math.md

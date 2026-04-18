@@ -176,3 +176,4 @@ cython_debug/
 # 
 static/js/bootstrap*
 static/css/bootstrap*
+docs/

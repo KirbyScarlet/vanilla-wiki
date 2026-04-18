@@ -17,12 +17,12 @@ vanilla wiki 后端实现
 
 import uvicorn
 
-from app.config import env
+from app.config import config
 from app.utils import app
 
 if __name__ == "__main__":
     uvicorn.run(
         app=app,
-        host=env.host,
-        port=env.port
+        host=config.host,
+        port=config.port
     )
