@@ -7,10 +7,11 @@ from .utils import app
 from .config import config
 from .docs import build_category
 
-with open("static/templates/index.html", "r", encoding="utf-8") as f:
-    template_content = f.read()
-
-HOMEPAGE = jinja2.Template(template_content)
+env = jinja2.Environment(
+    loader=jinja2.FileSystemLoader("static/templates"),
+    autoescape=jinja2.select_autoescape(),
+)
+index_template = env.get_template("index.html")
 
 
 def _icp_status(cfg, host: str) -> tuple[bool, str, str, str]:
@@ -27,7 +28,7 @@ async def root(request: Request):
     host = request.headers.get("host", "").lower()
     show_icp, icp_num, show_ps, ps_link = _icp_status(cfg, host)
 
-    return HTMLResponse(HOMEPAGE.render(
+    return HTMLResponse(index_template.render(
         dev=cfg.env == "dev",
         categories=categories,
         icp=show_icp,

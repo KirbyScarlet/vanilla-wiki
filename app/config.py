@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from pathlib import Path
 from fastapi import FastAPI,logger
-import dotenv
 import yaml
 
 class Config(BaseModel):
@@ -25,6 +24,13 @@ class Config(BaseModel):
     # 向量数据配置
     ollama_url: str = "http://localhost:11434"
 
+    # Elasticsearch 配置
+    es_host: str = "http://localhost:9200"
+    es_api_key: str = ""
+    es_api_key_encoded: str = ""
+    es_cert: bool = False
+    es_index_prefix: str = "vanilla-wiki"
+
     # 认证配置
     admin_enable: bool = True
     admin_totp_secret: str = "vanilla"
@@ -37,8 +43,6 @@ class Config(BaseModel):
     public_security_number: str = ""
 
     class Config:
-        #env_file = ".env"
-        #env_file_encoding = "utf-8"
         extra = "ignore"
 
 def load_config():
