@@ -7,3 +7,4 @@ python-multipart
 pyyaml
 markdown
 elasticsearch
+aiohttp

@@ -12,10 +12,10 @@ buffer_size: 65536  # 64M
 ollama_url: "http://localhost:11434"
 
 admin_enable: true
-admin_totp_secret: "vanilla"
+admin_totp_secret: "CHANGE_ME"
 admin_bypass_auth: false
 
 icp_host:
-  - "vanilla.wiki"
-icp_number: "苏ICP备2026007004号-1"
+  - ""
+icp_number: ""
 public_security: ""

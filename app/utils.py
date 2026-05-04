@@ -5,8 +5,8 @@ from fastapi import Request, HTTPException
 from contextlib import asynccontextmanager
 
 from .config import load_config
+from . import es_client
 
-_docs_template_content = __import__("pathlib").Path("static/templates/docs.html").read_text(encoding="utf-8")
 
 @asynccontextmanager
 async def startup(app: fastapi.FastAPI):
@@ -14,12 +14,29 @@ async def startup(app: fastapi.FastAPI):
         config = load_config()
         app.state.config = config
     except Exception as e:
-        logger.error("config load faild")
+        logger.error("config load failed")
 
+    # 初始化 Elasticsearch 客户端
+    try:
+        cfg = app.state.config
+        es = await es_client.init_es_client(cfg)
+        await es_client.ensure_mapping_index(es)
+        # 全量同步本地文档到 ES 映射
+        await es_client.scan_and_sync_all(es, cfg.data_dir, cfg)
+        app.state.es = es
+        logger.info("Elasticsearch mapping synced successfully")
+    except Exception as e:
+        logger.error("ES initialization failed: %s (will continue without ES)", e)
+        app.state.es = None
 
     yield
-    
 
+    # Shutdown
+    if app.state.es:
+        try:
+            await es_client.close_es_client()
+        except Exception:
+            pass
     logger.info("bye~")
 
 app = fastapi.FastAPI(lifespan=startup)

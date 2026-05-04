@@ -12,8 +12,15 @@ buffer_size: 65536  # 64M
 ollama_url: "http://localhost:11434"
 
 admin_enable: true
-admin_totp_secret: "vanilla"
+admin_totp_secret: "HJYXOOXWRRNRQSH3GTGEWM3V6IHU75ZJ"
 admin_bypass_auth: false
+
+es_host: "https://[::1]:9200"
+es_api_key: "6FEx_0jQrZu8Igr5uC3sBQ"
+es_api_key_encoded: "SnIyWDhaMEJVNHdvNDVSZ3loQTI6NkZFeF8walFyWnU4SWdyNXVDM3NCUQ=="
+# 如果使用证书，填写证书路径。否则连接时忽略证书错误。
+es_cert: false
+es_index_prefix: "vanilla-wiki"
 
 icp_host:
   - "vanilla.wiki"
