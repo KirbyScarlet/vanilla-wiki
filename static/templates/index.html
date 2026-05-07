@@ -23,7 +23,7 @@
           {% for category in categories %}
           {% if category.enable %}
           <div class="col-sm-6 col-md-4 col-lg-3">
-            <div class="card category-card" onclick="location.href='{{ category.url }}'">
+             <div class="card category-card" data-hash="{{ category.hash }}" style="cursor:pointer">
               <div class="card-body">
                 <h5 class="card-title">{{ category.title }}</h5>
                 <p class="card-text">{{ category.description }}</p>
@@ -284,29 +284,48 @@
   }
 
   function renderTreeItems(items) {
-    var html = '';
-    for(var i=0; i<items.length; i++){
-      var item = items[i];
-      if(item.type === 'directory'){
-        html += '<li>';
-        html += '<a href="' + (item.url || '/') + '" class="tree-folder">' + item.title + '</a>';
-        if(item.items){
-          html += '<ul class="tree-list tree-sub">';
-          for(var j=0; j<item.items.length; j++){
-            var sub = item.items[j];
-            if(sub.type === 'file'){
-              html += '<li><a href="' + sub.url + '" class="tree-file">' + sub.title + '</a></li>';
-            }
-          }
-          html += '</ul>';
-        }
-        html += '</li>';
-      } else if(item.type === 'file'){
-        html += '<li><a href="' + item.url + '" class="tree-file">' + item.title + '</a></li>';
+     var html = '';
+     for(var i=0; i<items.length; i++){
+       var item = items[i];
+       if(item.type === 'directory'){
+         html += '<li>';
+         html += '<a href="#" data-hash="' + (item.hash || '') + '" class="tree-folder">' + item.title + '</a>';
+         if(item.items){
+           html += '<ul class="tree-list tree-sub">';
+           for(var j=0; j<item.items.length; j++){
+             var sub = item.items[j];
+             if(sub.type === 'file'){
+               html += '<li><a href="#" data-hash="' + (sub.hash || '') + '" class="tree-file">' + sub.title + '</a></li>';
+             }
+           }
+           html += '</ul>';
+         }
+         html += '</li>';
+       } else if(item.type === 'file'){
+         html += '<li><a href="#" data-hash="' + (item.hash || '') + '" class="tree-file">' + item.title + '</a></li>';
+       }
+     }
+     return html;
+   }
+
+  document.addEventListener('click', function(e){
+    var folder = e.target.closest('.tree-folder, .tree-file');
+    if(folder){
+      var hash = folder.getAttribute('data-hash');
+      if(hash){
+        e.preventDefault();
+        window.location.href = '/docs/' + hash;
+      }
+      return;
+    }
+    var card = e.target.closest('.category-card');
+    if(card){
+      var hash = card.getAttribute('data-hash');
+      if(hash){
+        window.location.href = '/docs/' + hash;
       }
     }
-    return html;
-  }
+  });
 
   function renderRecent(items) {
     var docs = [];
@@ -325,7 +344,7 @@
     var recent = docs.slice(-5).reverse();
     var html = '';
     for(var i=0; i<recent.length; i++){
-      html += '<a href="' + recent[i].url + '" class="list-group-item list-group-item-action">' + recent[i].title + '</a>';
+      html += '<a href="#" data-hash="' + (recent[i].hash || '') + '" class="list-group-item list-group-item-action">' + recent[i].title + '</a>';
     }
     recentList.innerHTML = html;
   }

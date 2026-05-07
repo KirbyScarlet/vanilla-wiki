@@ -85,17 +85,17 @@ async def _list_documents(dirpath: pathlib.Path, cat_yaml: dict, prefix: str = "
     docs = []
     stem_map = {f.stem: f for f in files}
     for name in manual_order if order == "manual" and manual_order else []:
-        if name in stem_map:
-            f = stem_map[name]
-            doc_id = es_client.generate_doc_id(prefix or dirpath.name, f.name, "doc")
-            docs.append({
-                "name": f.name,
-                "title": f.stem,
-                "url": f"/docs/{doc_id}",
-                "active": False,
-                "category": prefix or dirpath.name,
-                "filename": f.name,
-            })
+          if name in stem_map:
+                f = stem_map[name]
+                doc_id = es_client.generate_doc_id(prefix or dirpath.name, f.name, "doc")
+                docs.append({
+                    "name": f.name,
+                    "title": f.stem,
+                    "hash": doc_id,
+                    "active": False,
+                    "category": prefix or dirpath.name,
+                    "filename": f.name,
+                })
 
     for f in files:
         if order != "manual" or f.name not in [m for m in manual_order]:
@@ -103,7 +103,7 @@ async def _list_documents(dirpath: pathlib.Path, cat_yaml: dict, prefix: str = "
             docs.append({
                 "name": f.name,
                 "title": f.stem,
-                "url": f"/docs/{doc_id}",
+                "hash": doc_id,
                 "active": False,
                 "category": prefix or dirpath.name,
                 "filename": f.name,
@@ -127,7 +127,7 @@ async def build_category_tree(dirpath: pathlib.Path) -> list[dict]:
                 "name": p.name,
                 "title": sub_yml.get("title", p.name),
                 "description": sub_yml.get("description", ""),
-                "uri": f"/docs/{cat_id}",
+                "hash": cat_id,
                 "enable": sub_yml.get("enable", True),
             })
             sub_items = await build_category_tree(p)
@@ -149,7 +149,7 @@ async def build_category_tree(dirpath: pathlib.Path) -> list[dict]:
                     "type": "file",
                     "name": f.name,
                     "title": f.stem,
-                    "uri": f"/docs/{doc_id}",
+                    "hash": doc_id,
                 })
         added = set(stem_map.keys())
         for f in files:
@@ -159,7 +159,7 @@ async def build_category_tree(dirpath: pathlib.Path) -> list[dict]:
                     "type": "file",
                     "name": f.name,
                     "title": f.stem,
-                    "uri": f"/docs/{doc_id}",
+                    "hash": doc_id,
                 })
     else:
         for f in files:
@@ -168,7 +168,7 @@ async def build_category_tree(dirpath: pathlib.Path) -> list[dict]:
                 "type": "file",
                 "name": f.name,
                 "title": f.stem,
-                "uri": f"/docs/{doc_id}",
+                "hash": doc_id,
             })
 
     return entries
@@ -187,7 +187,7 @@ async def build_category(dirpath: pathlib.Path, recursion: bool = True, parent: 
                 "name": p.name,
                 "title": yml.get("title", p.name),
                 "description": yml.get("description", ""),
-                "url": f"/docs/{cat_id}",
+                "hash": cat_id,
                 "enable": yml.get("enable", True),
             }
             if recursion:
@@ -201,7 +201,7 @@ async def build_category(dirpath: pathlib.Path, recursion: bool = True, parent: 
                 "type": "file",
                 "name": p.name,
                 "title": p.stem,
-                "url": f"/docs/{doc_id}",
+                "hash": doc_id,
                 "description": "",
                 "category": parent_cat,
                 "filename": p.name,
