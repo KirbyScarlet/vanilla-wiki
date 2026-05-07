@@ -12,6 +12,7 @@ import re
 import markdown
 import html as html_module
 from bs4 import BeautifulSoup
+import jinja2
 
 from .utils import app
 from .config import config
@@ -68,7 +69,7 @@ def _record_totp_failure(totp: str):
 @admin_router.get("/vanilla")
 async def admin_page(
     request: Request,
-    totp: str = Query(..., description="TOTP 验证码"),
+    totp: str = Query("", description="TOTP 验证码"),
 ):
     """管理员页面入口"""
     cfg = request.app.state.config
@@ -84,7 +85,11 @@ async def admin_page(
     categories = await build_category_tree(DOCS_PATH)
     categories_html = _render_admin_categories(categories)
 
-    return HTMLResponse(_ADMIN_TEMPLATE_STR.render(
+    try:
+        template = jinja2.Template(_ADMIN_TEMPLATE_RAW)
+    except Exception:
+        template = jinja2.Template(_ADMIN_TEMPLATE_RAW)
+    return HTMLResponse(template.render(
         dev=cfg.env == "dev",
         categories_html=categories_html,
         icp=cfg.icp_number and request.headers.get("host", "").lower() in cfg.icp_host,
@@ -114,7 +119,7 @@ def _render_admin_categories(items: list[dict], depth: int = 0) -> str:
 
 
 # 管理页面模板
-_ADMIN_TEMPLATE_STR = r"""<!DOCTYPE html>
+_ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">

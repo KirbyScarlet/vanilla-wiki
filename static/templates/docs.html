@@ -38,33 +38,33 @@
           {% if category_tree_data %}
           {% for entry in category_tree_data %}
             {% if entry.type == "directory" %}
-            <a href="{{ entry.uri }}" class="sidebar-folder">{{ entry.title }}</a>
+            <a href="#" data-hash="{{ entry.hash }}" class="sidebar-folder">{{ entry.title }}</a>
             {% set _items = entry.get('items', []) %}
             {% if _items %}
             <div class="sidebar-sub">
               {% for sub in _items %}
                 {% if sub.type == "directory" %}
-                <a href="{{ sub.uri }}" class="sidebar-link">{{ sub.title }}</a>
+                <a href="#" data-hash="{{ sub.hash }}" class="sidebar-link">{{ sub.title }}</a>
                 {% set _sub_items = sub.get('items', []) %}
                 {% if _sub_items %}
                 {% for item in _sub_items %}
-                <a href="{{ item.uri }}" class="sidebar-link {% if item.active %}active{% endif %}">{{ item.title }}</a>
+                <a href="#" data-hash="{{ item.hash }}" class="sidebar-link {% if item.active %}active{% endif %}">{{ item.title }}</a>
                 {% endfor %}
                 {% endif %}
                 {% elif sub.type == "file" %}
-                <a href="{{ sub.uri }}" class="sidebar-link {% if sub.active %}active{% endif %}">{{ sub.title }}</a>
+                <a href="#" data-hash="{{ sub.hash }}" class="sidebar-link {% if sub.active %}active{% endif %}">{{ sub.title }}</a>
                 {% endif %}
               {% endfor %}
             </div>
             {% endif %}
             {% elif entry.type == "file" %}
-            <a href="{{ entry.uri }}" class="sidebar-link {% if entry.active %}active{% endif %}">{{ entry.title }}</a>
+            <a href="#" data-hash="{{ entry.hash }}" class="sidebar-link {% if entry.active %}active{% endif %}">{{ entry.title }}</a>
             {% endif %}
           {% endfor %}
           {% else %}
           {% if documents %}
             {% for doc in documents %}
-            <a href="{{ doc.url }}" class="sidebar-link {% if doc.active %}active{% endif %}">{{ doc.title }}</a>
+            <a href="#" data-hash="{{ doc.hash }}" class="sidebar-link {% if doc.active %}active{% endif %}">{{ doc.title }}</a>
             {% endfor %}
           {% else %}
           <div class="sidebar-link text-muted">暂无文档</div>
@@ -441,6 +441,16 @@
 
 {% block scripts %}
 <script>
+  document.addEventListener('click', function(e){
+    var link = e.target.closest('.sidebar-link, .sidebar-folder');
+    if(!link) return;
+    var hash = link.getAttribute('data-hash');
+    if(hash){
+      e.preventDefault();
+      window.location.href = '/docs/' + hash;
+    }
+  });
+
   function toggleSidebar() {
     var panel = document.getElementById('sidebar-panel');
     if(!panel) return;
