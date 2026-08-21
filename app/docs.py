@@ -392,44 +392,41 @@ async def doc_page_by_id(request: Request, doc_id: str):
         }
         return await _serve_document(request, mapping, cfg, template, host, show_icp)
 
-    # 也尝试分类目录
-    for cat_dir in sorted(DOCS_PATH.iterdir()):
-        if not cat_dir.is_dir():
-            continue
-        cat_id = es_client.generate_doc_id(cat_dir.name, "category.yaml", "dir")
-        if cat_id == doc_id:
-            cat_yaml = await _read_category_yaml(cat_dir)
-            cat_name = cat_yaml.get("title", cat_dir.name)
-            return _render_cat_page(
-                cfg, template, cat_name, [],
-                [{"name": cat_name, "url": None}],
-                show_icp, host
-            )
+    # 也尝试分类目录（含子目录）
+    cat_dir = _find_dir_by_hash(doc_id)
+    if cat_dir is not None:
+        cat_yaml = await _read_category_yaml(cat_dir)
+        cat_name = cat_yaml.get("title", cat_dir.name)
+        tree = await build_category_tree(cat_dir)
+        rel = str(cat_dir.relative_to(DOCS_PATH))
+        return _render_cat_page(
+            cfg, template, cat_name, tree,
+            _build_breadcrumb(rel, is_file=False),
+            show_icp, host
+        )
 
     raise HTTPException(status_code=404, detail="Not found")
 
 
+def _find_dir_by_hash(doc_id: str) -> pathlib.Path | None:
+    """扫描 docs 目录树，通过 hash 匹配查找分类目录（含子目录）"""
+    for p in sorted(DOCS_PATH.rglob("*")):
+        if p.is_dir() and es_client.generate_doc_id(p.name, "category.yaml", "dir") == doc_id:
+            return p
+    return None
+
+
 async def _find_file_by_hash(doc_id: str) -> tuple[pathlib.Path, str] | None:
-    """扫描本地 docs 目录，通过 hash 匹配查找文件"""
-    for cat_dir in sorted(DOCS_PATH.iterdir()):
-        if not cat_dir.is_dir():
-            continue
-        # 检查顶层文件
-        for f in cat_dir.iterdir():
-            if f.is_file() and f.name not in ("category.yaml",):
-                file_id = es_client.generate_doc_id(cat_dir.name, f.name, "doc")
-                if file_id == doc_id:
-                    return f, cat_dir.name
-        # 递归检查子目录
-        for subdir in cat_dir.iterdir():
-            if not subdir.is_dir():
-                continue
-            for f in subdir.iterdir():
-                if f.is_file() and f.name not in ("category.yaml",):
-                    # 使用顶层分类目录名作为 category（与 scan_and_sync_all 一致）
-                    file_id = es_client.generate_doc_id(cat_dir.name, f.name, "doc")
-                    if file_id == doc_id:
-                        return f, cat_dir.name
+    """扫描本地 docs 目录树，通过 hash 匹配查找文件
+
+    哈希规则与 es_client.scan_and_sync_all 一致：
+    category 使用文件所在的（最内层）目录名。
+    """
+    for p in sorted(DOCS_PATH.rglob("*")):
+        if p.is_file() and p.name != "category.yaml":
+            file_id = es_client.generate_doc_id(p.parent.name, p.name, "doc")
+            if file_id == doc_id:
+                return p, p.parent.name
     return None
 
 
@@ -550,18 +547,15 @@ async def category_or_doc_page(request: Request, category: str):
             }
             return await _serve_document(request, mapping, cfg, template, host, show_icp)
 
-        for cat_dir in sorted(DOCS_PATH.iterdir()):
-            if not cat_dir.is_dir():
-                continue
-            cat_id = es_client.generate_doc_id(cat_dir.name, "category.yaml", "dir")
-            if cat_id == hash_id:
-                cat_yaml = await _read_category_yaml(cat_dir)
-                tree = await build_category_tree(cat_dir)
-                return _render_cat_page(
-                    cfg, template, cat_yaml.get("title", cat_dir.name),
-                    tree, [{"name": cat_yaml.get("title", cat_dir.name), "url": None}],
-                    show_icp, host
-                )
+        cat_dir = _find_dir_by_hash(hash_id)
+        if cat_dir is not None:
+            cat_yaml = await _read_category_yaml(cat_dir)
+            tree = await build_category_tree(cat_dir)
+            return _render_cat_page(
+                cfg, template, cat_yaml.get("title", cat_dir.name),
+                tree, [{"name": cat_yaml.get("title", cat_dir.name), "url": None}],
+                show_icp, host
+            )
 
         raise HTTPException(status_code=404, detail="Not found")
 

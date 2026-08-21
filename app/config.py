@@ -25,6 +25,7 @@ class Config(BaseModel):
     ollama_url: str = "http://localhost:11434"
 
     # Elasticsearch 配置
+    es_enable: bool = True  # false: 跳过 ES 连接，全部走本地文件系统兜底
     es_host: str = "http://localhost:9200"
     es_api_key: str = ""
     es_api_key_encoded: str = ""

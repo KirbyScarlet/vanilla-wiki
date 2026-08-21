@@ -16,18 +16,22 @@ async def startup(app: fastapi.FastAPI):
     except Exception as e:
         logger.error("config load failed")
 
-    # 初始化 Elasticsearch 客户端
-    try:
-        cfg = app.state.config
-        es = await es_client.init_es_client(cfg)
-        await es_client.ensure_mapping_index(es)
-        # 全量同步本地文档到 ES 映射
-        await es_client.scan_and_sync_all(es, cfg.data_dir, cfg)
-        app.state.es = es
-        logger.info("Elasticsearch mapping synced successfully")
-    except Exception as e:
-        logger.error("ES initialization failed: %s (will continue without ES)", e)
-        app.state.es = None
+    # 初始化 Elasticsearch 客户端（es_enable=false 时完全跳过，走本地兜底）
+    app.state.es = None
+    if not getattr(app.state.config, "es_enable", True):
+        logger.info("Elasticsearch disabled by config (es_enable=false)")
+    else:
+        try:
+            cfg = app.state.config
+            es = await es_client.init_es_client(cfg)
+            await es_client.ensure_mapping_index(es)
+            # 全量同步本地文档到 ES 映射
+            await es_client.scan_and_sync_all(es, cfg.data_dir, cfg)
+            app.state.es = es
+            logger.info("Elasticsearch mapping synced successfully")
+        except Exception as e:
+            logger.error("ES initialization failed: %s (will continue without ES)", e)
+            app.state.es = None
 
     yield
 
