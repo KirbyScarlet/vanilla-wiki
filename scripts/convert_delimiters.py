@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Convert $...$ and $$...$$ / $$...\\] to \\(...\\) and \\[...\\] in latex-math markdown docs.
+Convert $...$ and $$...$$ / $$...\$$ to \$...\$ and \$$...\$$ in latex-math markdown docs.
 
 Rules:
 - Skip content inside ``` code fences entirely
 - Skip content inside `...` backtick code spans
-- Handle multi-line display math: $$ ... \\]  (opening $$, closing \\])
+- Handle multi-line display math: $$ ... \$$  (opening $$, closing \$$)
 - Handle single-line display: $$ ... $$
 - Handle inline $ blocks ($ ... $)
 """
@@ -16,7 +16,7 @@ DOCS_DIR = Path("/mnt/ramdisk/vanilla-wiki/docs/math/latex-math")
 
 
 def _replace_display_inline(text: str) -> tuple[str, int]:
-    """Replace $$ ... $$ with \\[...\\] in plain text (not inside backticks)."""
+    """Replace $$ ... $$ with \$$...\$$ in plain text (not inside backticks)."""
     out = []
     i = 0
     count = 0
@@ -32,7 +32,7 @@ def _replace_display_inline(text: str) -> tuple[str, int]:
                     j += 2
                     continue
                 if j + 1 < len(text) and text[j] == '$' and text[j + 1] == '$':
-                    out.append('\\[' + text[start:j] + '\\]')
+                    out.append('\$$' + text[start:j] + '\$$')
                     i = j + 2
                     found_close = True
                     count += 1
@@ -51,7 +51,7 @@ def _replace_display_inline(text: str) -> tuple[str, int]:
 
 
 def _replace_inline_dollar(text: str) -> tuple[str, int]:
-    """Replace $...$ with \\(...\\) in plain text."""
+    """Replace $...$ with \$...\$ in plain text."""
     out = []
     i = 0
     count = 0
@@ -72,7 +72,7 @@ def _replace_inline_dollar(text: str) -> tuple[str, int]:
                 if text[j] == '$':
                     depth -= 1
                     if depth == 0:
-                        out.append('\\(' + text[start:j] + '\\)')
+                        out.append('\$' + text[start:j] + '\$')
                         i = j + 1
                         count += 1
                         break
@@ -110,7 +110,7 @@ def convert_line(line: str) -> tuple[str, int, int]:
 def convert_file(filepath: Path, dry_run: bool = True) -> tuple[int, int]:
     """Convert $$ and $ delimiters in a markdown file.
 
-    Handles the $$ ... \\] format (opening $$, closing \\]) used in these files.
+    Handles the $$ ... \$$ format (opening $$, closing \$$) used in these files.
     """
     content = filepath.read_text(encoding='utf-8')
     lines = content.split('\n')
@@ -136,15 +136,15 @@ def convert_file(filepath: Path, dry_run: bool = True) -> tuple[int, int]:
             new_lines.append(line)
             continue
 
-        # Track multi-line display math: $$ ... \\]
+        # Track multi-line display math: $$ ... \$$
         if in_display:
-            # Check if line contains \\] (with optional backslash escaping handled)
-            if re.search(r'\\\][ \t]*$', stripped):
-                # End of display block — replace \\] with \\]
-                # We need to replace the opening $$ on the first line and \\] on this line
-                new_lines[-1] = '\\[' + new_lines[-1].split('\n')[0].lstrip()
-                # Replace this line's \\] with \\]
-                converted_line = re.sub(r'\\\][ \t]*$', '\\]', stripped)
+            # Check if line contains \$$ (with optional backslash escaping handled)
+            if re.search(r'\\$$[ \t]*$', stripped):
+                # End of display block — replace \$$ with \$$
+                # We need to replace the opening $$ on the first line and \$$ on this line
+                new_lines[-1] = '\$$' + new_lines[-1].split('\n')[0].lstrip()
+                # Replace this line's \$$ with \$$
+                converted_line = re.sub(r'\\$$[ \t]*$', '\$$', stripped)
                 # Preserve indentation
                 if line != stripped:
                     converted_line = line[:len(line) - len(stripped)] + converted_line
@@ -169,7 +169,7 @@ def convert_file(filepath: Path, dry_run: bool = True) -> tuple[int, int]:
                 total_display += dc
                 new_lines.append(single)
             else:
-                # Multi-line: $$ starts a block, closing with \\]
+                # Multi-line: $$ starts a block, closing with \$$
                 in_display = True
                 display_start = len(new_lines)
                 new_lines.append(line)

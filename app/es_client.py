@@ -31,10 +31,12 @@ async def init_es_client(cfg) -> AsyncElasticsearch:
     global es_client
     import ssl
     host = getattr(cfg, "es_host", "http://localhost:9200")
-    api_key_encoded = getattr(cfg, "es_api_key_encoded", "")
+    # 兼容两种配置写法：优先 es_api_key_encoded（base64 编码的 id:key），
+    # 其次 es_api_key（直接填写编码后的 key）
+    api_key = getattr(cfg, "es_api_key_encoded", "") or getattr(cfg, "es_api_key", "")
     use_cert = getattr(cfg, "es_cert", False)
 
-    kwargs = {"hosts": [host], "api_key": api_key_encoded}
+    kwargs = {"hosts": [host], "api_key": api_key}
     if not use_cert:
         # 禁用 SSL 证书验证（开发环境/自签证书）
         ssl_context = ssl.create_default_context()

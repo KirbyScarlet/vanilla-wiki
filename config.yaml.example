@@ -12,10 +12,20 @@ buffer_size: 65536  # 64M
 ollama_url: "http://localhost:11434"
 
 admin_enable: true
-admin_totp_secret: "CHANGE_ME"
+admin_totp_secret: "XXXXXXXXXXXXXXX"
 admin_bypass_auth: false
 
+es_enable: true  # false: 跳过 ES 连接，全部走本地文件系统兜底（ES 故障期间可临时关闭）
+es_host: "https://[::1]:9200"
+es_api_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# 如果使用证书，填写证书路径。
+es_cert: false  # true: 已申请根证书；false: 忽略证书错误。
+es_index_prefix: "vanilla-wiki"
+
+# 如果有就写
 icp_host:
-  - ""
-icp_number: ""
-public_security: ""
+  - "example.com"
+icp_number: "苏ICP备xxxxxxxxxxxx号-x"
+public_security_link: "https://beian.mps.gov.cn/#/query/webSearch?code=xxxxxxxxx"
+public_security_number: "苏公网安备xxxxxxxxxx号"
+public_security: '<a href="https://beian.mps.gov.cn/#/query/webSearch?code=xxxxxxxxxxxxx" rel="noreferrer" target="_blank" class="text-secondary" style="text-decoration:none;">苏公网安备32011302323086号</a>'

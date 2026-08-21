@@ -278,7 +278,7 @@
         html += '<ul class="tree-list">';
         if(item.items) html += renderTreeItems(item.items);
         html += '</ul></div></div></div>';
-      })(i, item);
+      })(i, items[i]);
     }
     return html;
   }

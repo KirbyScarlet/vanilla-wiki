@@ -15,11 +15,11 @@ admin_enable: true
 admin_totp_secret: "HJYXOOXWRRNRQSH3GTGEWM3V6IHU75ZJ"
 admin_bypass_auth: false
 
-es_host: "https://[::1]:9200"
-es_api_key: "6FEx_0jQrZu8Igr5uC3sBQ"
-es_api_key_encoded: "SnIyWDhaMEJVNHdvNDVSZ3loQTI6NkZFeF8walFyWnU4SWdyNXVDM3NCUQ=="
-# 如果使用证书，填写证书路径。否则连接时忽略证书错误。
-es_cert: false
+es_enable: true  # ES 集群已重置恢复；2026-08-18 重新生成 API key（elastic 用户，权限 all，无过期时间）
+es_host: "https://server.vanillatte.cafe:9200"
+es_api_key: "VUVSOEk2QUI5emI0bVRYMkp1anU6aGw0NWwwazhpMGdrV0Z6cXljTl9sZw=="
+# 如果使用证书，填写证书路径。
+es_cert: true  # true: 已申请根证书；false: 忽略证书错误。
 es_index_prefix: "vanilla-wiki"
 
 icp_host:
