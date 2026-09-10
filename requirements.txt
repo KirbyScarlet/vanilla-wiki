@@ -1,10 +1,11 @@
 fastapi
 pydantic
 jinja2
-asyncio
 aiofiles
 python-multipart
 pyyaml
 markdown
 elasticsearch
-aiohttp
+beautifulsoup4
+uvicorn
+pyotp

@@ -133,14 +133,30 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   {% endif %}
   <style>
+    :root {
+      --vanilla-bg: #fdfbf7;
+      --vanilla-surface: #ffffff;
+      --vanilla-accent: #c8a46e;
+      --vanilla-accent-light: #f5edd8;
+      --vanilla-accent-hover: #b8935a;
+      --vanilla-text: #2d2a26;
+      --vanilla-text-secondary: #8a8580;
+      --vanilla-border: #ece8df;
+      --vanilla-border-hover: #ddd5c8;
+      --vanilla-shadow: 0 1px 4px rgba(45, 42, 38, 0.06);
+      --vanilla-shadow-lg: 0 4px 20px rgba(45, 42, 38, 0.08);
+      --vanilla-radius: 12px;
+      --vanilla-radius-sm: 8px;
+      --vanilla-transition: 0.2s ease;
+    }
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background-color: #f5f5f5;
-      color: #333;
+      background-color: var(--vanilla-bg);
+      color: var(--vanilla-text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
         "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -149,32 +165,67 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
     footer { flex-shrink: 0; }
 
     /* Navbar */
-    .navbar {
-      background-color: #fff !important;
-      border-bottom: 1px solid #e8e8e8;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-      height: 56px;
+    .wiki-navbar {
+      background-color: var(--vanilla-surface) !important;
+      border-bottom: 1px solid var(--vanilla-border);
+      box-shadow: var(--vanilla-shadow);
+      height: 60px;
     }
-    .navbar-brand {
+    .wiki-navbar .container-fluid {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 1.5rem;
+    }
+    .wiki-navbar-brand {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--vanilla-text) !important;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .wiki-navbar-brand:hover { color: var(--vanilla-accent) !important; }
+    .wiki-brand-dot {
+      width: 8px; height: 8px;
+      background: var(--vanilla-accent);
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .wiki-admin-badge {
+      margin-left: 1rem;
+      padding: 0.25rem 0.75rem;
+      background: var(--vanilla-accent-light);
+      color: var(--vanilla-accent);
+      border-radius: 20px;
+      font-size: 0.8rem;
       font-weight: 600;
-      font-size: 1.15rem;
-      color: #333 !important;
     }
-    .navbar-text { color: #888; font-size: 0.9rem; }
+    .wiki-navbar-toggler {
+      border: 1px solid var(--vanilla-border);
+      padding: 0.35rem 0.6rem;
+      border-radius: var(--vanilla-radius-sm);
+      background: var(--vanilla-surface);
+    }
+    .wiki-navbar-toggler:focus { box-shadow: 0 0 0 3px var(--vanilla-accent-light); }
 
     /* Cards */
-    .card {
-      border: 1px solid #e8e8e8;
-      border-radius: 10px;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    .wiki-card {
+      border: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius);
+      background: var(--vanilla-surface);
+      box-shadow: var(--vanilla-shadow);
     }
-    .card-header {
-      background-color: #fafafa;
-      border-bottom: 1px solid #e8e8e8;
-      border-radius: 10px 10px 0 0 !important;
-      font-size: 0.9rem;
-      color: #555;
+    .wiki-card-header {
+      background-color: var(--vanilla-bg);
+      border-bottom: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius) var(--vanilla-radius) 0 0 !important;
+      font-size: 0.875rem;
+      color: var(--vanilla-text-secondary);
+      font-weight: 600;
+      padding: 0.75rem 1rem;
     }
 
     /* Sidebar */
@@ -190,42 +241,44 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
       overflow-y: auto;
     }
     .admin-sidebar .card-body::-webkit-scrollbar { width: 4px; }
-    .admin-sidebar .card-body::-webkit-scrollbar-thumb { background-color: #ddd; border-radius: 2px; }
+    .admin-sidebar .card-body::-webkit-scrollbar-thumb { background-color: var(--vanilla-border-hover); border-radius: 2px; }
     .admin-sidebar .list-group-item {
-      border-color: #f0f0f0;
+      border-color: var(--vanilla-border);
       padding: 0.6rem 1rem;
       font-size: 0.85rem;
     }
-    .admin-sidebar .list-group-item:hover { background-color: #fafafa; }
+    .admin-sidebar .list-group-item:hover { background-color: var(--vanilla-bg); }
+    .admin-sidebar .badge { font-size: 0.7rem; }
 
     /* Content area */
-    .admin-content .card { margin-bottom: 1rem; }
+    .admin-content .wiki-card { margin-bottom: 1rem; }
     .admin-content .card-body { padding: 1.25rem; }
 
     /* Markdown preview */
     .markdown-preview {
-      background-color: #fafafa;
-      border: 1px solid #e8e8e8;
-      border-radius: 8px;
+      background-color: var(--vanilla-bg);
+      border: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius-sm);
       padding: 1rem 1.25rem;
       min-height: 100px;
-      color: #555;
+      color: var(--vanilla-text);
       font-size: 0.875rem;
       line-height: 1.7;
     }
-    .markdown-preview h2 { font-size: 1.15rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 0.3rem; margin-bottom: 0.5rem; }
-    .markdown-preview h3 { font-size: 1rem; color: #333; margin-bottom: 0.4rem; }
-    .markdown-preview h4 { font-size: 0.95rem; color: #444; margin-bottom: 0.3rem; }
-    .markdown-preview strong { color: #333; }
-    .markdown-preview em { color: #666; }
+    .markdown-preview h2 { font-size: 1.15rem; color: var(--vanilla-text); border-bottom: 1px solid var(--vanilla-border); padding-bottom: 0.3rem; margin-bottom: 0.5rem; }
+    .markdown-preview h3 { font-size: 1rem; color: var(--vanilla-text); margin-bottom: 0.4rem; }
+    .markdown-preview h4 { font-size: 0.95rem; color: var(--vanilla-text); margin-bottom: 0.3rem; }
+    .markdown-preview strong { color: var(--vanilla-text); }
+    .markdown-preview em { color: var(--vanilla-text-secondary); }
     .markdown-preview code {
-      background: #f0f0f0;
+      background: var(--vanilla-accent-light);
       padding: 0.1rem 0.35rem;
       border-radius: 3px;
       font-size: 0.85em;
+      color: #c0392b;
     }
     .markdown-preview pre {
-      background: #f0f0f0;
+      background: var(--vanilla-accent-light);
       border-radius: 6px;
       padding: 0.75rem;
       overflow-x: auto;
@@ -233,81 +286,122 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
     .markdown-preview br { display: block; content: ""; margin-top: 0.3rem; }
 
     /* Buttons */
-    .btn { border-radius: 6px; font-size: 0.875rem; padding: 0.375rem 0.875rem; transition: all 0.15s; }
-    .btn-success { background-color: #6c757d; border-color: #6c757d; color: #fff; }
-    .btn-success:hover { background-color: #5a6268; border-color: #545b62; }
-    .btn-outline-secondary { border-color: #d0d0d0; color: #666; }
-    .btn-outline-secondary:hover { background-color: #eee; color: #333; }
+    .wiki-btn {
+      border-radius: var(--vanilla-radius-sm);
+      font-size: 0.875rem;
+      padding: 0.4rem 1rem;
+      transition: all var(--vanilla-transition);
+      font-weight: 500;
+    }
+    .wiki-btn-primary {
+      background-color: var(--vanilla-accent);
+      border-color: var(--vanilla-accent);
+      color: #fff;
+    }
+    .wiki-btn-primary:hover {
+      background-color: var(--vanilla-accent-hover);
+      border-color: var(--vanilla-accent-hover);
+      color: #fff;
+    }
+    .wiki-btn-outline {
+      border: 1px solid var(--vanilla-border);
+      color: var(--vanilla-text-secondary);
+      background: var(--vanilla-surface);
+    }
+    .wiki-btn-outline:hover {
+      border-color: var(--vanilla-border-hover);
+      color: var(--vanilla-text);
+      background-color: var(--vanilla-bg);
+    }
 
     /* Form controls */
     .form-control, .form-select {
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
+      border: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius-sm);
       font-size: 0.875rem;
+      background: var(--vanilla-surface);
+      color: var(--vanilla-text);
     }
     .form-control:focus, .form-select:focus {
-      border-color: #ccc;
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+      border-color: var(--vanilla-accent);
+      box-shadow: 0 0 0 3px var(--vanilla-accent-light);
     }
-    .form-label { font-size: 0.85rem; color: #555; font-weight: 500; }
+    .form-label { font-size: 0.85rem; color: var(--vanilla-text-secondary); font-weight: 500; }
 
     /* Modal */
-    .modal-content {
-      border: 1px solid #e8e8e8;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    .wiki-modal .modal-content {
+      border: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius);
+      box-shadow: var(--vanilla-shadow-lg);
     }
-    .modal-header { border-bottom: 1px solid #f0f0f0; padding: 1rem 1.25rem; }
-    .modal-title { font-size: 1rem; font-weight: 600; color: #333; }
-    .modal-body { padding: 1.25rem; }
-    .modal-footer { border-top: 1px solid #f0f0f0; padding: 0.75rem 1.25rem; }
+    .wiki-modal .modal-header {
+      border-bottom: 1px solid var(--vanilla-border);
+      padding: 1rem 1.25rem;
+    }
+    .wiki-modal .modal-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--vanilla-text);
+    }
+    .wiki-modal .modal-body { padding: 1.25rem; }
+    .wiki-modal .modal-footer {
+      border-top: 1px solid var(--vanilla-border);
+      padding: 0.75rem 1.25rem;
+    }
 
     /* Footer */
-    footer {
-      background-color: #fff;
-      border-top: 1px solid #e8e8e8;
-      padding: 0.75rem 0;
+    .wiki-footer {
+      background-color: var(--vanilla-surface);
+      border-top: 1px solid var(--vanilla-border);
+      padding: 1rem 0;
     }
-    footer p { font-size: 0.75rem; color: #bbb; margin-bottom: 0; }
-    footer a { color: #bbb; text-decoration: none; }
-    footer a:hover { color: #888; }
+    .wiki-footer p { font-size: 0.8rem; color: var(--vanilla-text-secondary); margin-bottom: 0.25rem; }
+    .wiki-footer a { color: var(--vanilla-text-secondary); text-decoration: none; }
+    .wiki-footer a:hover { color: var(--vanilla-accent); }
 
     /* Misc */
-    a { color: #555; }
-    a:hover { color: #222; }
-    .text-muted-custom { color: #aaa !important; }
+    a { color: var(--vanilla-accent-hover); }
+    a:hover { color: var(--vanilla-text); }
+    .text-muted-custom { color: var(--vanilla-text-secondary) !important; }
     ul.admin-list { padding-left: 1.25rem; }
-    ul.admin-list li { margin-bottom: 0.3rem; color: #666; font-size: 0.875rem; }
+    ul.admin-list li { margin-bottom: 0.3rem; color: var(--vanilla-text-secondary); font-size: 0.875rem; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background-color: var(--vanilla-border-hover); border-radius: 3px; }
 
     /* Mobile */
     @media (max-width: 767.98px) {
-      .navbar-brand { font-size: 1.05rem; }
+      .wiki-navbar .container-fluid { padding: 0 1rem; }
+      .wiki-admin-badge { margin-left: 0.5rem; font-size: 0.75rem; }
       .admin-sidebar {
         display: none;
         position: fixed;
-        top: 56px;
+        top: 60px;
         left: 0;
         right: 0;
         z-index: 1050;
-        max-height: calc(100vh - 56px);
-        background: #fff;
-        border-bottom: 1px solid #e8e8e8;
+        max-height: calc(100vh - 60px);
+        background: var(--vanilla-surface);
+        border-bottom: 1px solid var(--vanilla-border);
       }
       .admin-sidebar.show { display: block; }
-      .admin-sidebar .card { border: none; box-shadow: none; border-radius: 0; }
+      .admin-sidebar .wiki-card { border: none; box-shadow: none; border-radius: 0; }
       .admin-toggle-btn {
         display: inline-flex !important;
         align-items: center;
         gap: 0.25rem;
-        border: 1px solid #d0d0d0;
-        background: #fff;
-        color: #666;
-        border-radius: 6px;
+        border: 1px solid var(--vanilla-border);
+        background: var(--vanilla-surface);
+        color: var(--vanilla-text-secondary);
+        border-radius: var(--vanilla-radius-sm);
         padding: 0.3rem 0.65rem;
         font-size: 0.8rem;
-        transition: all 0.15s;
+        transition: all var(--vanilla-transition);
+        cursor: pointer;
       }
-      .admin-toggle-btn:hover { background-color: #f5f5f5; color: #333; }
+      .admin-toggle-btn:hover { background-color: var(--vanilla-bg); color: var(--vanilla-text); }
     }
     @media (min-width: 768px) {
       .admin-toggle-btn { display: none !important; }
@@ -315,10 +409,13 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-sm sticky-top">
+  <nav class="navbar navbar-expand-sm wiki-navbar sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Vanilla Wiki</a>
-      <span class="navbar-text ms-3">后台管理</span>
+      <a class="wiki-navbar-brand" href="/">
+        <span class="wiki-brand-dot"></span>
+        Vanilla Wiki
+      </a>
+      <span class="wiki-admin-badge">后台管理</span>
       <button class="admin-toggle-btn ms-auto" type="button" onclick="toggleSidebar()">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
         分类
@@ -332,8 +429,8 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
         <!-- Left: Category sidebar -->
         <div class="col-md-4 col-lg-3 d-none d-md-block">
           <div class="admin-sidebar">
-            <div class="card">
-              <div class="card-header">&#128193; 分类目录</div>
+            <div class="wiki-card">
+              <div class="wiki-card-header">&#128193; 分类目录</div>
               <div class="card-body p-0">
                 <div id="category-list">
                   {{ categories_html | safe }}
@@ -345,15 +442,15 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
 
         <!-- Right: Operations -->
         <div class="col-12 col-md-8 col-lg-7 admin-content">
-          <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span>文档管理</span>
-              <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+          <div class="wiki-card">
+            <div class="wiki-card-header d-flex justify-content-between align-items-center">
+              <span>📝 文档管理</span>
+              <button class="wiki-btn wiki-btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
                 &#10010; 新建文档
               </button>
             </div>
             <div class="card-body">
-              <h6 style="font-size:0.9rem; font-weight:600; color:#444; margin-bottom:0.75rem;">操作说明</h6>
+              <h6 style="font-size:0.9rem; font-weight:600; color:var(--vanilla-text); margin-bottom:0.75rem;">操作说明</h6>
               <ul class="admin-list">
                 <li>新建文档需要填写分类、文件名和内容</li>
                 <li>文档使用 Markdown 格式编写</li>
@@ -362,8 +459,8 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-header">Markdown 预览</div>
+          <div class="wiki-card">
+            <div class="wiki-card-header">👁️ Markdown 预览</div>
             <div class="card-body p-0">
               <div class="markdown-preview" id="add-preview">
                 <p class="text-muted-custom mb-0" style="font-size:0.85rem;">在弹窗中编写文档内容，此处实时显示预览</p>
@@ -375,7 +472,7 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
     </div>
   </main>
 
-  <footer class="text-center">
+  <footer class="wiki-footer text-center">
     <div class="container">
       <p>&copy; 2025-2026 Vanilla Wiki. All rights reserved.</p>
       {% if icp %}<p><a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">{{ icp_number }}</a></p>{% endif %}
@@ -383,7 +480,7 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
   </footer>
 
   <!-- 新建文档弹窗 -->
-  <div class="modal fade" id="addModal" tabindex="-1">
+  <div class="modal fade wiki-modal" id="addModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
@@ -409,8 +506,8 @@ _ADMIN_TEMPLATE_RAW = r"""<!DOCTYPE html>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-success" onclick="addDocument()">创建</button>
+          <button type="button" class="wiki-btn wiki-btn-outline" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="wiki-btn wiki-btn-primary" onclick="addDocument()">创建</button>
         </div>
       </div>
     </div>

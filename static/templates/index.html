@@ -3,253 +3,270 @@
 {% block title %}Vanilla Wiki{% endblock %}
 
 {% block content %}
-<div class="tab-nav-wrapper bg-white">
-    <div class="tab-nav container">
-      <button class="tab-btn active" data-tab="home-tab-pane">主页</button>
-      <button class="tab-btn" data-tab="category-tab-pane">目录</button>
-      <button class="tab-btn" data-tab="about-tab-pane">关于</button>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="tab-pane active" id="home-tab-pane">
-      <div class="hero-card">
-        <h1>(/^w^)/~~</h1>
-        <p>非常简单又朴素的个人文档站</p>
+<div class="container">
+  <!-- ═══ Home Tab ═══ -->
+  <div class="tab-pane active" id="home-tab-pane">
+    <!-- Hero -->
+    <div class="hero-section py-5 py-md-5">
+      <div class="text-center fade-in">
+        <div class="hero-emoji mb-3">(^・ω・^ )</div>
+        <h1 class="hero-title fw-bold" style="font-size:2.25rem; color:var(--vanilla-text); margin-bottom:0.75rem; letter-spacing:-0.02em;">
+          Vanilla Wiki
+        </h1>
+        <p class="hero-subtitle text-muted" style="font-size:1.05rem; max-width:480px; margin:0 auto;">
+          非常简单又朴素的个人文档站
+        </p>
       </div>
-      <div class="category-grid">
-        <div class="section-title">目录分类</div>
-        <div class="row g-3" id="category">
-          {% for category in categories %}
-          {% if category.enable %}
-          <div class="col-sm-6 col-md-4 col-lg-3">
-             <div class="card category-card" data-hash="{{ category.hash }}" style="cursor:pointer">
-              <div class="card-body">
-                <h5 class="card-title">{{ category.title }}</h5>
-                <p class="card-text">{{ category.description }}</p>
-              </div>
-            </div>
-          </div>
-          {% endif %}
-          {% endfor %}
-          <div class="col-sm-6 col-md-4 col-lg-3" id="backend-error" style="display:none">
-            <div class="card backend-error-card">
-              <div class="card-body">
-                <h5 class="card-title">后端服务异常</h5>
-                <p class="card-text">网站功能将受限，请稍后再试。</p>
-              </div>
+    </div>
+
+    <!-- Category Cards -->
+    <div class="category-section pb-5">
+      <div class="section-header d-flex align-items-center justify-content-between mb-4">
+        <h2 class="section-title h5 fw-bold mb-0" style="color:var(--vanilla-text);">目录分类</h2>
+        <span class="wiki-badge wiki-badge-muted" id="category-count">{{ categories|length }} 个分类</span>
+      </div>
+      <div class="row g-3" id="category">
+        {% for category in categories %}
+        {% if category.enable %}
+        <div class="col-6 col-md-4 col-lg-3 fade-in">
+          <div class="wiki-card category-card h-100" data-hash="{{ category.hash }}" style="cursor:pointer;">
+            <div class="card-body p-3 p-md-4">
+              <div class="category-icon mb-2" style="font-size:1.5rem;">{{ category.icon or '📄' }}</div>
+              <h5 class="card-title fw-semibold mb-1" style="font-size:0.95rem; color:var(--vanilla-text);">{{ category.title }}</h5>
+              <p class="card-text" style="font-size:0.825rem; color:var(--vanilla-text-secondary); line-height:1.5; margin-bottom:0;">{{ category.description }}</p>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="category-tab-pane">
-      <div class="category-search-area my-3">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="搜索文档..." id="category-search-input">
-          <div class="input-group-text">
-            <input class="form-check-input mt-0" type="checkbox" id="category-semantic-search">
-            <label class="form-check-label" for="category-semantic-search">语义搜索（较慢）</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="recent-section card mb-3">
-        <div class="card-header">最近更新</div>
-        <div id="recent-list" class="list-group list-group-flush"></div>
-      </div>
-
-      <div class="accordion" id="category-accordion"></div>
-    </div>
-
-    <div class="tab-pane" id="about-tab-pane">
-      <div class="about-content py-4">
-        <div class="about-card card">
-          <div class="card-body">
-            <h3 class="h5 fw-bold mb-3">关于本站</h3>
-            <hr>
-            <p class="text-muted">这是一个基于 FastAPI + Bootstrap 构建的个人文档站，支持 Markdown 文档、全文搜索和向量索引。</p>
-            <p class="text-muted">文档的文档</p>
+        {% endif %}
+        {% endfor %}
+        <div class="col-6 col-md-4 col-lg-3" id="backend-error" style="display:none">
+          <div class="wiki-card backend-error-card h-100" style="border-color:#f0d0c8;">
+            <div class="card-body p-3 p-md-4 text-center">
+              <div class="category-icon mb-2" style="font-size:1.5rem;">⚠️</div>
+              <h5 class="card-title fw-semibold mb-1" style="font-size:0.95rem; color:#c0392b;">服务异常</h5>
+              <p class="card-text" style="font-size:0.825rem; color:var(--vanilla-text-secondary); line-height:1.5; margin-bottom:0;">后端服务暂时不可用，功能将受限。</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- ═══ Category Tab ═══ -->
+  <div class="tab-pane" id="category-tab-pane">
+    <!-- Search -->
+    <div class="category-search-area my-4">
+      <div class="input-group">
+        <span class="input-group-text" style="background:var(--vanilla-bg); border:1px solid var(--vanilla-border); border-right:none; border-radius:var(--vanilla-radius-sm) 0 0 var(--vanilla-radius-sm); color:var(--vanilla-text-secondary);">
+          🔍
+        </span>
+        <input type="text" class="form-control" placeholder="搜索文档…" id="category-search-input" style="border:1px solid var(--vanilla-border); border-radius:0;">
+        <div class="input-group-text" style="background:var(--vanilla-bg); border:1px solid var(--vanilla-border); border-left:none; border-radius:0 var(--vanilla-radius-sm) var(--vanilla-radius-sm) 0;">
+          <input class="form-check-input mt-0" type="checkbox" id="category-semantic-search">
+          <label class="form-check-label" for="category-semantic-search" style="font-size:0.825rem;">语义</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent -->
+    <div class="recent-section wiki-card mb-4">
+      <div class="card-header d-flex align-items-center gap-2">
+        <span>🕐</span> 最近更新
+      </div>
+      <div id="recent-list" class="list-group list-group-flush"></div>
+    </div>
+
+    <!-- Accordion -->
+    <div class="accordion" id="category-accordion"></div>
+  </div>
+
+  <!-- ═══ About Tab ═══ -->
+  <div class="tab-pane" id="about-tab-pane">
+    <div class="about-content py-4" style="max-width:640px; margin:0 auto;">
+      <div class="text-center mb-4">
+        <div style="font-size:3rem; margin-bottom:0.5rem;">(〃'▽'〃)</div>
+        <h2 class="fw-bold" style="color:var(--vanilla-text);">关于本站</h2>
+      </div>
+
+      <div class="wiki-card">
+        <div class="card-body p-4">
+          <p style="color:var(--vanilla-text-secondary); font-size:0.925rem; line-height:1.8;">
+            Vanilla Wiki 是一个基于 <strong style="color:var(--vanilla-text);">FastAPI</strong> + <strong style="color:var(--vanilla-text);">Bootstrap</strong> 构建的个人文档站。
+          </p>
+          <p style="color:var(--vanilla-text-secondary); font-size:0.925rem; line-height:1.8;">
+            支持 <strong style="color:var(--vanilla-text);">Markdown</strong> 文档编写、Elasticsearch 全文搜索和向量索引，采用简洁的浅色主题设计。
+          </p>
+          <hr style="border-color:var(--vanilla-border);">
+          <p class="text-muted" style="font-size:0.875rem;">文档的文档</p>
+        </div>
+      </div>
+
+      <div class="wiki-card mt-4">
+        <div class="card-body p-4">
+          <h6 class="fw-bold mb-3" style="color:var(--vanilla-text);">技术栈</h6>
+          <div class="row g-2">
+            <div class="col-6">
+              <span class="wiki-badge wiki-badge-accent">FastAPI</span>
+            </div>
+            <div class="col-6">
+              <span class="wiki-badge wiki-badge-accent">Bootstrap 5</span>
+            </div>
+            <div class="col-6">
+              <span class="wiki-badge wiki-badge-accent">Elasticsearch</span>
+            </div>
+            <div class="col-6">
+              <span class="wiki-badge wiki-badge-accent">Markdown</span>
+            </div>
+            <div class="col-6">
+              <span class="wiki-badge wiki-badge-accent">KaTeX</span>
+            </div>
+            <div class="col-6">
+              <span class="wiki-badge wiki-badge-accent">Python 3.10+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block head %}
 <style>
-  .tab-nav-wrapper { border-bottom: 1px solid #e8e8e8; }
-  .tab-nav { display: flex; gap: 0; }
-  .tab-btn {
-    border: none;
-    border-radius: 0;
-    color: #777;
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 0.85rem 1.5rem;
-    transition: color 0.15s, background-color 0.15s;
-    position: relative;
-    background: transparent;
-    cursor: pointer;
-    flex: 1;
-    text-align: center;
-  }
-  .tab-btn:hover { color: #333; background-color: #fafafa; }
-  .tab-btn.active { color: #222; background-color: transparent; }
-  .tab-btn.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 15%;
-    right: 15%;
-    height: 2px;
-    background-color: #333;
-    border-radius: 1px;
-  }
   .tab-pane { display: none; }
   .tab-pane.active { display: block; }
 
-  .hero-card {
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 14px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-    padding: 3.5rem 2rem;
-    text-align: center;
-    margin: 2rem auto;
-    max-width: 600px;
+  /* ── Hero Section ──────────────────────────────────── */
+  .hero-section {
+    padding: 3rem 1rem 2rem;
   }
-  .hero-card h1 {
+  .hero-emoji {
     font-size: 2.5rem;
-    font-weight: 300;
-    color: #333;
-    margin-bottom: 0.75rem;
-    letter-spacing: 0.05em;
+    line-height: 1;
+    opacity: 0.85;
   }
-  .hero-card p { font-size: 0.95rem; color: #999; margin-bottom: 0; }
-
-  .category-grid { max-width: 960px; margin: 0 auto; padding: 0 1rem 2rem; }
-  .section-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #eee;
+  .hero-title {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .hero-subtitle {
+    color: var(--vanilla-text-secondary) !important;
   }
 
+  /* ── Section Header ────────────────────────────────── */
+  .section-header {
+    padding: 0 0.5rem;
+  }
+
+  /* ── Category Cards ────────────────────────────────── */
   .category-card {
-    border: 1px solid #e8e8e8;
-    border-radius: 10px;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    transition: transform 0.15s, box-shadow 0.2s;
-    cursor: pointer;
-    margin-bottom: 0;
+    border: 1px solid var(--vanilla-border);
+    border-radius: var(--vanilla-radius);
+    background: var(--vanilla-surface);
+    box-shadow: var(--vanilla-shadow);
+    transition: all var(--vanilla-transition);
   }
   .category-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    box-shadow: var(--vanilla-shadow-lg);
+    border-color: var(--vanilla-accent);
   }
   .category-card .card-body { padding: 1.25rem; }
-  .category-card .card-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.3rem;
-  }
-  .category-card .card-text {
-    font-size: 0.825rem;
-    color: #999;
-    line-height: 1.5;
-    margin-bottom: 0;
+  .category-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--vanilla-accent-light);
+    border-radius: 10px;
+    font-size: 1.25rem;
   }
 
-  .category-search-area { max-width: 800px; margin: 1.5rem auto 0; padding: 0 1rem; }
-  .category-search-area .form-control {
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    font-size: 0.875rem;
-  }
-  .category-search-area .form-control:focus {
-    border-color: #ccc;
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
-  }
-  .category-search-area .input-group-text {
-    background-color: #fafafa;
-    border: 1px solid #e0e0e0;
-    border-left: none;
-    border-radius: 0 8px 8px 0;
-  }
-  .category-search-area .form-check-input { border-color: #d0d0d0; }
-  .category-search-area .form-check-input:checked {
-    background-color: #d0d0d0;
-    border-color: #c0c0c0;
-  }
-  .category-search-area .form-check-label { font-size: 0.825rem; color: #888; }
+  /* ── Search Area ───────────────────────────────────── */
+  .category-search-area { max-width: 700px; margin: 0 auto; padding: 0 0.5rem; }
 
-  .recent-section { max-width: 800px; margin: 1rem auto 0; border-radius: 10px; overflow: hidden; }
+  /* ── Recent Section ────────────────────────────────── */
+  .recent-section { max-width: 700px; margin: 0 auto; border-radius: var(--vanilla-radius); overflow: hidden; }
   .recent-section .list-group-item {
-    border-color: #f5f5f5;
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
+    border-color: var(--vanilla-border);
+    padding: 0.7rem 1rem;
+    font-size: 0.875rem;
+    transition: background-color var(--vanilla-transition);
   }
-  .recent-section .list-group-item:hover { background-color: #fafafa; }
+  .recent-section .list-group-item:hover { background-color: var(--vanilla-accent-light); }
 
-  .about-content { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; }
-  .about-card { border-radius: 14px; overflow: hidden; }
+  /* ── Accordion ─────────────────────────────────────── */
+  .accordion-item {
+    border: 1px solid var(--vanilla-border) !important;
+    border-radius: var(--vanilla-radius) !important;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--vanilla-shadow);
+  }
+  .accordion-button {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--vanilla-text);
+    background-color: var(--vanilla-surface);
+    padding: 0.85rem 1rem;
+    box-shadow: none !important;
+  }
+  .accordion-button:not(.collapsed) {
+    background-color: var(--vanilla-accent-light);
+    color: var(--vanilla-accent-hover);
+  }
+  .accordion-button::after {
+    filter: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%238a8580'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  }
+  .accordion-body { padding: 0; }
 
+  /* ── Tree List ─────────────────────────────────────── */
   .tree-list { list-style: none; padding: 0; margin: 0; }
   .tree-list .tree-folder {
     display: block;
-    padding: 0.65rem 1rem;
+    padding: 0.7rem 1rem;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #333;
+    color: var(--vanilla-text);
     text-decoration: none;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.12s;
+    border-bottom: 1px solid var(--vanilla-border);
+    transition: all var(--vanilla-transition);
   }
-  .tree-list .tree-folder:hover { background-color: #fafafa; }
+  .tree-list .tree-folder:hover { background-color: var(--vanilla-accent-light); color: var(--vanilla-accent-hover); }
   .tree-list .tree-file {
     display: block;
-    padding: 0.55rem 1rem;
+    padding: 0.6rem 1rem;
     font-size: 0.85rem;
-    color: #777;
+    color: var(--vanilla-text-secondary);
     text-decoration: none;
-    border-bottom: 1px solid #f5f5f5;
-    transition: background-color 0.12s, color 0.12s;
+    border-bottom: 1px solid var(--vanilla-border);
+    transition: all var(--vanilla-transition);
   }
-  .tree-list .tree-file:hover { background-color: #fafafa; color: #333; }
+  .tree-list .tree-file:hover { background-color: var(--vanilla-bg); color: var(--vanilla-text); }
   .tree-list .tree-sub { padding-left: 1.25rem; }
 
+  /* ── Backend Error ─────────────────────────────────── */
+  .backend-error-card .card-body { padding: 1.25rem; }
+
   @media (max-width: 767.98px) {
-    .hero-card { padding: 2rem 1.25rem; margin: 1rem; border-radius: 12px; }
-    .hero-card h1 { font-size: 2rem; }
-    .tab-btn { padding: 0.75rem 0.5rem; font-size: 0.85rem; }
-    .category-search-area { padding: 0 0.75rem; }
-    .about-card { border-radius: 12px; }
+    .hero-section { padding: 2rem 0.5rem 1.5rem; }
+    .hero-emoji { font-size: 2rem; }
+    .hero-title { font-size: 1.75rem; }
+    .category-search-area { padding: 0 0.5rem; }
   }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  document.querySelectorAll('.tab-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
-      document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
-      this.classList.add('active');
-      document.getElementById(this.dataset.tab).classList.add('active');
-    });
-  });
-
+  // ── Health check ─────────────────────────────────────
   fetch("/api/health")
     .then(function(r){ if(!r.ok) document.getElementById('backend-error').style.display='block'; })
     .catch(function(){ document.getElementById('backend-error').style.display='block'; });
 
+  // ── Load category data ───────────────────────────────
   var categoryAccordion = document.getElementById('category-accordion');
   var recentList = document.getElementById('recent-list');
 
@@ -263,6 +280,7 @@
       if(categoryAccordion) categoryAccordion.innerHTML = '<div class="text-muted p-3">加载失败</div>';
     });
 
+  // ── Render accordion ─────────────────────────────────
   function renderAccordion(items) {
     var html = '';
     for(var i=0; i<items.length; i++){
@@ -284,30 +302,31 @@
   }
 
   function renderTreeItems(items) {
-     var html = '';
-     for(var i=0; i<items.length; i++){
-       var item = items[i];
-       if(item.type === 'directory'){
-         html += '<li>';
-         html += '<a href="#" data-hash="' + (item.hash || '') + '" class="tree-folder">' + item.title + '</a>';
-         if(item.items){
-           html += '<ul class="tree-list tree-sub">';
-           for(var j=0; j<item.items.length; j++){
-             var sub = item.items[j];
-             if(sub.type === 'file'){
-               html += '<li><a href="#" data-hash="' + (sub.hash || '') + '" class="tree-file">' + sub.title + '</a></li>';
-             }
-           }
-           html += '</ul>';
-         }
-         html += '</li>';
-       } else if(item.type === 'file'){
-         html += '<li><a href="#" data-hash="' + (item.hash || '') + '" class="tree-file">' + item.title + '</a></li>';
-       }
-     }
-     return html;
-   }
+    var html = '';
+    for(var i=0; i<items.length; i++){
+      var item = items[i];
+      if(item.type === 'directory'){
+        html += '<li>';
+        html += '<a href="#" data-hash="' + (item.hash || '') + '" class="tree-folder">' + item.title + '</a>';
+        if(item.items){
+          html += '<ul class="tree-list tree-sub">';
+          for(var j=0; j<item.items.length; j++){
+            var sub = item.items[j];
+            if(sub.type === 'file'){
+              html += '<li><a href="#" data-hash="' + (sub.hash || '') + '" class="tree-file">' + sub.title + '</a></li>';
+            }
+          }
+          html += '</ul>';
+        }
+        html += '</li>';
+      } else if(item.type === 'file'){
+        html += '<li><a href="#" data-hash="' + (item.hash || '') + '" class="tree-file">' + item.title + '</a></li>';
+      }
+    }
+    return html;
+  }
 
+  // ── Click handlers ───────────────────────────────────
   document.addEventListener('click', function(e){
     var folder = e.target.closest('.tree-folder, .tree-file');
     if(folder){
@@ -327,6 +346,7 @@
     }
   });
 
+  // ── Recent docs ──────────────────────────────────────
   function renderRecent(items) {
     var docs = [];
     function walk(list){

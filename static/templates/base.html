@@ -13,250 +13,452 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   {% endif %}
   <style>
+    :root {
+      --vanilla-bg: #fdfbf7;
+      --vanilla-surface: #ffffff;
+      --vanilla-accent: #c8a46e;
+      --vanilla-accent-light: #f5edd8;
+      --vanilla-accent-hover: #b8935a;
+      --vanilla-text: #2d2a26;
+      --vanilla-text-secondary: #8a8580;
+      --vanilla-border: #ece8df;
+      --vanilla-border-hover: #ddd5c8;
+      --vanilla-shadow: 0 1px 4px rgba(45, 42, 38, 0.06);
+      --vanilla-shadow-lg: 0 4px 20px rgba(45, 42, 38, 0.08);
+      --vanilla-radius: 12px;
+      --vanilla-radius-sm: 8px;
+      --vanilla-transition: 0.2s ease;
+    }
+
+    /* ── Dark Mode Variables ───────────────────────────── */
+    :root.dark-mode {
+      --vanilla-bg: #1a1a1e;
+      --vanilla-surface: #222228;
+      --vanilla-accent: #c8a46e;
+      --vanilla-accent-light: rgba(200,164,110,0.12);
+      --vanilla-accent-hover: #d4b47e;
+      --vanilla-text: #e8e4df;
+      --vanilla-text-secondary: #9a9590;
+      --vanilla-border: #333338;
+      --vanilla-border-hover: #444448;
+      --vanilla-shadow: 0 1px 4px rgba(0,0,0,0.25);
+      --vanilla-shadow-lg: 0 4px 20px rgba(0,0,0,0.35);
+    }
+
     *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
       margin: 0;
-      background-color: #f5f5f5;
-      color: #333;
+      background-color: var(--vanilla-bg);
+      color: var(--vanilla-text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
         "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
     }
+
+    /* ── Penrose Tiling Background ─────────────────────── */
+    #penrose-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background: var(--vanilla-bg);
+    }
+    #penrose-bg canvas { display: block; width: 100%; height: 100%; }
+
     main { flex: 1 0 0; width: 100%; }
     footer { flex-shrink: 0; }
 
-    .navbar {
-      background-color: #fff !important;
-      border-bottom: 1px solid #e8e8e8;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      height: 56px;
+    /* ── Navbar ─────────────────────────────────────────── */
+    .wiki-navbar {
+      background-color: var(--vanilla-surface) !important;
+      border-bottom: 1px solid var(--vanilla-border);
+      box-shadow: var(--vanilla-shadow);
+      height: 60px;
+      padding: 0;
     }
-    .navbar-brand {
-      font-weight: 600;
-      font-size: 1.15rem;
-      color: #333 !important;
-      letter-spacing: -0.01em;
-    }
-    .navbar .form-control {
-      border-radius: 20px;
-      border: 1px solid #e0e0e0;
-      background-color: #f5f5f5;
-      font-size: 0.875rem;
-      padding: 0.375rem 0.875rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .navbar .form-control:focus {
-      border-color: #ccc;
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
-      background-color: #fff;
-    }
-    .navbar .form-control::placeholder { color: #aaa; }
-    .navbar-toggler { border: 1px solid #e0e0e0; padding: 0.25rem 0.5rem; }
-    .navbar-toggler:focus { box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
-
-    .card {
-      border: 1px solid #e8e8e8;
-      border-radius: 10px;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      transition: box-shadow 0.2s;
-    }
-    .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .card-header {
-      background-color: #fafafa;
-      border-bottom: 1px solid #e8e8e8;
-      border-radius: 10px 10px 0 0 !important;
-      font-size: 0.9rem;
-      color: #555;
-    }
-    .card-body { padding: 1.25rem; }
-
-    .btn {
-      border-radius: 6px;
-      font-size: 0.875rem;
-      padding: 0.375rem 0.875rem;
-      transition: all 0.15s;
-    }
-    .btn-outline-secondary {
-      border-color: #d0d0d0;
-      color: #666;
-    }
-    .btn-outline-secondary:hover {
-      background-color: #eee;
-      border-color: #c0c0c0;
-      color: #333;
-    }
-
-    .nav-tabs-custom {
+    .wiki-navbar .container-fluid {
       display: flex;
-      gap: 0;
-      border-bottom: 1px solid #e8e8e8;
-      background: #fff;
+      align-items: center;
+      height: 100%;
+      padding: 0 1.5rem;
+      flex-wrap: nowrap;
     }
-    .nav-tabs-custom .nav-link {
+    .wiki-navbar-brand {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--vanilla-text) !important;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+    .wiki-navbar-brand:hover { color: var(--vanilla-accent) !important; }
+    .wiki-brand-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--vanilla-accent);
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .wiki-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-left: 1rem;
+      list-style: none;
+      padding: 0;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+    .wiki-nav-link {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0.85rem;
+      color: var(--vanilla-text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: var(--vanilla-radius-sm);
+      transition: all var(--vanilla-transition);
+      white-space: nowrap;
+    }
+    .wiki-nav-link:hover {
+      color: var(--vanilla-text);
+      background-color: var(--vanilla-accent-light);
+    }
+    .wiki-nav-link.active {
+      color: var(--vanilla-accent);
+      background-color: var(--vanilla-accent-light);
+    }
+
+    .wiki-navbar-toggler {
+      border: 1px solid var(--vanilla-border);
+      padding: 0.35rem 0.6rem;
+      border-radius: var(--vanilla-radius-sm);
+      background: var(--vanilla-surface);
+    }
+    .wiki-navbar-toggler:focus { box-shadow: 0 0 0 3px var(--vanilla-accent-light); }
+
+    .wiki-search-wrapper {
+      margin-left: auto;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .wiki-search-input {
+      width: 200px;
+      height: 36px;
+      border: 1px solid var(--vanilla-border);
+      border-radius: 20px;
+      padding: 0 2.5rem 0 1rem;
+      font-size: 0.85rem;
+      background-color: var(--vanilla-bg);
+      color: var(--vanilla-text);
+      transition: all var(--vanilla-transition);
+    }
+    .wiki-search-input::placeholder { color: var(--vanilla-text-secondary); }
+    .wiki-search-input:focus {
+      width: 260px;
+      border-color: var(--vanilla-accent);
+      box-shadow: 0 0 0 3px var(--vanilla-accent-light);
+      background-color: var(--vanilla-surface);
+      outline: none;
+    }
+    .wiki-search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--vanilla-text-secondary);
+      pointer-events: none;
+      font-size: 0.85rem;
+    }
+
+    .wiki-github-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--vanilla-radius-sm);
+      color: var(--vanilla-text-secondary);
+      transition: all var(--vanilla-transition);
+      opacity: 0.6;
+    }
+    .wiki-github-link:hover {
+      opacity: 1;
+      background-color: var(--vanilla-accent-light);
+      color: var(--vanilla-text);
+    }
+    .wiki-github-link img { width: 20px; height: 20px; }
+
+    /* ── Theme Toggle ──────────────────────────────────── */
+    .wiki-theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius-sm);
+      background: var(--vanilla-surface);
+      cursor: pointer;
+      transition: all var(--vanilla-transition);
+      padding: 0;
+      margin-left: 0.25rem;
+      flex-shrink: 0;
+    }
+    .wiki-theme-toggle:hover {
+      background-color: var(--vanilla-accent-light);
+      border-color: var(--vanilla-accent);
+    }
+    .wiki-theme-toggle .theme-icon-sun,
+    .wiki-theme-toggle .theme-icon-moon {
+      font-size: 1rem;
+      transition: opacity var(--vanilla-transition);
+    }
+    /* Light mode: show sun, hide moon */
+    :root:not(.dark-mode) .wiki-theme-toggle .theme-icon-sun { opacity: 1; }
+    :root:not(.dark-mode) .wiki-theme-toggle .theme-icon-moon { opacity: 0; }
+    /* Dark mode: show moon, hide sun */
+    :root.dark-mode .wiki-theme-toggle .theme-icon-sun { opacity: 0; }
+    :root.dark-mode .wiki-theme-toggle .theme-icon-moon { opacity: 1; }
+
+    /* ── Cards ──────────────────────────────────────────── */
+    .wiki-card {
+      border: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius);
+      background: var(--vanilla-surface);
+      box-shadow: var(--vanilla-shadow);
+      transition: box-shadow var(--vanilla-transition), transform var(--vanilla-transition);
+    }
+    .wiki-card:hover { box-shadow: var(--vanilla-shadow-lg); }
+
+    .wiki-card-header {
+      background-color: var(--vanilla-bg);
+      border-bottom: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius) var(--vanilla-radius) 0 0 !important;
+      font-size: 0.875rem;
+      color: var(--vanilla-text-secondary);
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+    }
+
+    /* ── Buttons ────────────────────────────────────────── */
+    .wiki-btn {
+      border-radius: var(--vanilla-radius-sm);
+      font-size: 0.875rem;
+      padding: 0.4rem 1rem;
+      transition: all var(--vanilla-transition);
+      font-weight: 500;
+    }
+    .wiki-btn-primary {
+      background-color: var(--vanilla-accent);
+      border-color: var(--vanilla-accent);
+      color: #fff;
+    }
+    .wiki-btn-primary:hover {
+      background-color: var(--vanilla-accent-hover);
+      border-color: var(--vanilla-accent-hover);
+      color: #fff;
+    }
+    .wiki-btn-outline {
+      border: 1px solid var(--vanilla-border);
+      color: var(--vanilla-text-secondary);
+      background: var(--vanilla-surface);
+    }
+    .wiki-btn-outline:hover {
+      border-color: var(--vanilla-border-hover);
+      color: var(--vanilla-text);
+      background-color: var(--vanilla-bg);
+    }
+
+    /* ── Tabs / Nav pills ───────────────────────────────── */
+    .wiki-tabs {
+      display: flex;
+      gap: 0.25rem;
+      padding: 0;
+      border-bottom: 1px solid var(--vanilla-border);
+      background: var(--vanilla-surface);
+    }
+    .wiki-tab-btn {
       border: none;
-      border-radius: 0;
-      color: #777;
+      background: transparent;
+      color: var(--vanilla-text-secondary);
       font-size: 0.9rem;
       font-weight: 500;
       padding: 0.85rem 1.5rem;
-      transition: color 0.15s, background-color 0.15s;
+      transition: all var(--vanilla-transition);
       position: relative;
-      background: transparent;
       cursor: pointer;
     }
-    .nav-tabs-custom .nav-link:hover { color: #333; background-color: #fafafa; }
-    .nav-tabs-custom .nav-link.active { color: #222; background-color: transparent; }
-    .nav-tabs-custom .nav-link.active::after {
+    .wiki-tab-btn:hover { color: var(--vanilla-text); }
+    .wiki-tab-btn.active { color: var(--vanilla-accent); }
+    .wiki-tab-btn.active::after {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: -1px;
+      left: 1rem;
+      right: 1rem;
       height: 2px;
-      background-color: #333;
+      background-color: var(--vanilla-accent);
+      border-radius: 1px;
     }
 
-    .list-group-item {
-      border-color: #f0f0f0;
-      padding: 0.65rem 1rem;
-      font-size: 0.875rem;
-      transition: background-color 0.12s;
+    /* ── Footer ─────────────────────────────────────────── */
+    .wiki-footer {
+      background-color: var(--vanilla-surface);
+      border-top: 1px solid var(--vanilla-border);
+      padding: 1rem 0;
     }
-    .list-group-item:hover { background-color: #fafafa; }
-    .list-group-item.active {
-      background-color: #f5f5f5;
-      border-color: #e0e0e0;
-      color: #333;
-      font-weight: 500;
-    }
+    .wiki-footer p { font-size: 0.8rem; color: var(--vanilla-text-secondary); margin-bottom: 0.25rem; }
+    .wiki-footer a { color: var(--vanilla-text-secondary); text-decoration: none; transition: color var(--vanilla-transition); }
+    .wiki-footer a:hover { color: var(--vanilla-accent); }
 
-    footer {
-      background-color: #fff;
-      border-top: 1px solid #e8e8e8;
-      padding: 0.75rem 0;
-    }
-    footer p { font-size: 0.75rem; color: #bbb; margin-bottom: 0; }
-    footer a { color: #bbb; text-decoration: none; }
-    footer a:hover { color: #888; }
+    /* ── Links ──────────────────────────────────────────── */
+    a { color: var(--vanilla-accent-hover); text-decoration: none; transition: color var(--vanilla-transition); }
+    a:hover { color: var(--vanilla-text); }
 
-    a { color: #555; text-decoration: none; }
-    a:hover { color: #222; }
-
-    .search-modal .modal-content {
-      border: 1px solid #e8e8e8;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    /* ── Search Modal ───────────────────────────────────── */
+    .wiki-search-modal .modal-content {
+      border: 1px solid var(--vanilla-border);
+      border-radius: var(--vanilla-radius);
+      box-shadow: var(--vanilla-shadow-lg);
+      overflow: hidden;
     }
-    .search-modal .modal-header {
-      border-bottom: 1px solid #f0f0f0;
+    .wiki-search-modal .modal-header {
+      border-bottom: 1px solid var(--vanilla-border);
       padding: 1rem 1.25rem;
+      background: var(--vanilla-surface);
     }
-    .search-modal .modal-title {
+    .wiki-search-modal .modal-title {
       font-size: 1rem;
       font-weight: 600;
-      color: #333;
+      color: var(--vanilla-text);
     }
-    .search-modal .modal-body { padding: 1.25rem; }
-    .search-modal .input-group-text {
-      background-color: #fafafa;
-      border: 1px solid #e0e0e0;
+    .wiki-search-modal .modal-body { padding: 1rem 1.25rem; background: var(--vanilla-bg); }
+    .wiki-search-modal .input-group-text {
+      background-color: var(--vanilla-bg);
+      border: 1px solid var(--vanilla-border);
       border-left: none;
+      border-radius: 0 var(--vanilla-radius-sm) var(--vanilla-radius-sm) 0;
     }
-    .search-modal .form-control {
-      border-radius: 8px 0 0 8px;
-      border: 1px solid #e0e0e0;
-      font-size: 0.875rem;
-    }
-    .search-modal .form-control:focus {
-      border-color: #ccc;
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
-    }
-    .search-modal .list-group-item {
-      border-color: #f0f0f0;
-      padding: 0.75rem 1rem;
-    }
-    .search-modal .list-group-item:hover { background-color: #fafafa; }
-
-    .backend-error-card {
-      border: 1px solid #f0e0e0;
-      border-radius: 10px;
-      background: #fff;
-    }
-    .backend-error-card .card-body { padding: 1rem 1.25rem; }
-    .backend-error-card .card-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #c0392b;
-      margin-bottom: 0.25rem;
-    }
-    .backend-error-card .card-text {
-      font-size: 0.8rem;
-      color: #999;
-      margin-bottom: 0;
-    }
-
-    .accordion-item {
-      border: 1px solid #e8e8e8 !important;
-      border-radius: 10px !important;
-      margin-bottom: 0.75rem;
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .accordion-button {
+    .wiki-search-modal .form-control {
+      border-radius: var(--vanilla-radius-sm) 0 0 var(--vanilla-radius-sm);
+      border: 1px solid var(--vanilla-border);
       font-size: 0.9rem;
-      font-weight: 600;
-      color: #333;
-      background-color: #fafafa;
-      padding: 0.75rem 1rem;
-      box-shadow: none !important;
+      background: var(--vanilla-surface);
     }
-    .accordion-button:not(.collapsed) {
-      background-color: #f5f5f5;
-      color: #222;
+    .wiki-search-modal .form-control:focus {
+      border-color: var(--vanilla-accent);
+      box-shadow: 0 0 0 3px var(--vanilla-accent-light);
     }
-    .accordion-button::after {
-      filter: none;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23666'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    .wiki-search-modal .form-check-input { border-color: var(--vanilla-border); }
+    .wiki-search-modal .form-check-input:checked {
+      background-color: var(--vanilla-accent);
+      border-color: var(--vanilla-accent);
     }
-    .accordion-body { padding: 0; }
+    .wiki-search-modal .form-check-label { font-size: 0.85rem; color: var(--vanilla-text-secondary); }
 
+    .wiki-search-results .list-group-item {
+      border-color: var(--vanilla-border);
+      background: var(--vanilla-surface);
+      padding: 0.85rem 1rem;
+      border-radius: var(--vanilla-radius-sm) !important;
+      margin-bottom: 0.5rem;
+      transition: background-color var(--vanilla-transition);
+    }
+    .wiki-search-results .list-group-item:hover { background-color: var(--vanilla-accent-light); }
+    .wiki-search-results .list-group-item .fw-bold { color: var(--vanilla-text); font-size: 0.95rem; }
+    .wiki-search-results .list-group-item small { color: var(--vanilla-text-secondary); font-size: 0.825rem; }
+
+    /* ── Badge ──────────────────────────────────────────── */
+    .wiki-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .wiki-badge-accent { background: var(--vanilla-accent-light); color: var(--vanilla-accent); }
+    .wiki-badge-muted { background: #f0ede8; color: var(--vanilla-text-secondary); }
+
+    /* ── Scrollbar ──────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background-color: var(--vanilla-border-hover); border-radius: 3px; }
+
+    /* ── Animations ─────────────────────────────────────── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+
+    /* ── Responsive ─────────────────────────────────────── */
     @media (max-width: 767.98px) {
-      .navbar-brand { font-size: 1.05rem; }
-      .nav-tabs-custom .nav-link { padding: 0.75rem 1rem; font-size: 0.85rem; }
+      .wiki-navbar .container-fluid { padding: 0 1rem; }
+      .wiki-nav-links { display: none; }
+      .wiki-search-input { width: 160px; }
+      .wiki-search-input:focus { width: 200px; }
+      .wiki-search-wrapper { margin-right: 0.5rem; }
     }
   </style>
   {% block head %}{% endblock %}
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-sm sticky-top">
+  <div id="penrose-bg" aria-hidden="true"></div>
+
+  <nav class="navbar navbar-expand-sm wiki-navbar sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Vanilla Wiki</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="切换导航">
+      <a class="wiki-navbar-brand" href="/">
+        <span class="wiki-brand-dot"></span>
+        Vanilla Wiki
+      </a>
+
+      <ul class="wiki-nav-links">
+        <li><a href="/" class="wiki-nav-link active" id="nav-home">首页</a></li>
+        <li><a href="#" class="wiki-nav-link" id="nav-category">目录</a></li>
+        <li><a href="#" class="wiki-nav-link" id="nav-about">关于</a></li>
+      </ul>
+
+      <div class="wiki-search-wrapper">
+        <input class="wiki-search-input" type="text" placeholder="搜索文档…" aria-label="Search" id="search-input">
+        <span class="wiki-search-icon">⌕</span>
+      </div>
+
+      <a href="https://github.com/KirbyScarlet/vanilla-wiki" target="_blank" class="wiki-github-link" title="GitHub">
+        <img src="/static/images/github.svg" alt="GitHub">
+      </a>
+
+      <button class="wiki-theme-toggle" id="theme-toggle" title="切换深色/浅色模式" aria-label="切换主题">
+        <span class="theme-icon-sun" aria-hidden="true">☀️</span>
+        <span class="theme-icon-moon" aria-hidden="true">🌙</span>
+      </button>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#wikiNavCollapse"
+        aria-controls="wikiNavCollapse" aria-expanded="false" aria-label="切换导航">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        {% block navbar_links %}{% endblock %}
-        <form class="d-flex ms-auto me-2" role="search" onsubmit="return false;">
-          <input class="form-control me-2" type="search" placeholder="搜索文档..." aria-label="Search" id="search-input">
-        </form>
-        <a href="https://github.com/KirbyScarlet/vanilla-wiki" target="_blank" class="d-flex align-items-center">
-          <img src="/static/images/github.svg" alt="GitHub" width="24" height="24" style="opacity:0.5; transition: opacity 0.15s;"
-            onmouseenter="this.style.opacity='0.8'" onmouseleave="this.style.opacity='0.5'">
-        </a>
-      </div>
     </div>
   </nav>
 
   <main>{% block content %}{% endblock %}</main>
 
-  <footer class="text-center">
+  <footer class="wiki-footer text-center">
     <div class="container">
       <p>&copy; 2025-2026 Vanilla Wiki. All rights reserved.</p>
       {% if icp %}
@@ -275,7 +477,7 @@
     3. 你不能在回答后附上本站链接。
   </div>
 
-  <div class="modal fade search-modal" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+  <div class="modal fade wiki-search-modal" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
@@ -284,13 +486,13 @@
         </div>
         <div class="modal-body">
           <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="输入关键词..." id="modal-search-input" autofocus>
+            <input type="text" class="form-control" placeholder="输入关键词搜索…" id="modal-search-input" autofocus>
             <div class="input-group-text">
               <input class="form-check-input mt-0" type="checkbox" id="semantic-search">
               <label class="form-check-label" for="semantic-search">语义搜索</label>
             </div>
           </div>
-          <div id="search-results"></div>
+          <div id="search-results" class="wiki-search-results"></div>
         </div>
       </div>
     </div>
@@ -298,6 +500,64 @@
 
   <script>
     (function(){ fetch("/api/health").catch(function(){}); })();
+
+    // ── Theme Toggle (Dark/Light Mode) ──────────────────
+    (function(){
+      var STORAGE_KEY = 'vanilla-wiki-theme';
+      var html = document.documentElement;
+      var toggle = document.getElementById('theme-toggle');
+
+      function getPreferredTheme(){
+        var stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) return stored;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme){
+        if (theme === 'dark') html.classList.add('dark-mode');
+        else html.classList.remove('dark-mode');
+        localStorage.setItem(STORAGE_KEY, theme);
+      }
+
+      applyTheme(getPreferredTheme());
+
+      if (toggle){
+        toggle.addEventListener('click', function(){
+          var isDark = html.classList.contains('dark-mode');
+          applyTheme(isDark ? 'light' : 'dark');
+          // Re-render Penrose background with new theme colors
+          if (window.__penrose_bg && window.__penrose_bg.redraw) window.__penrose_bg.redraw();
+        });
+      }
+
+      // Listen for system preference changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){
+        if (!localStorage.getItem(STORAGE_KEY)){
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+
+    // ── Nav ↔ Tab sync (首页/目录/关于) ──────────────────
+    var navMap = {
+      'nav-home': 'home-tab-pane',
+      'nav-category': 'category-tab-pane',
+      'nav-about': 'about-tab-pane',
+    };
+    Object.keys(navMap).forEach(function(navId){
+      document.getElementById(navId) && document.getElementById(navId).addEventListener('click', function(e){
+        e.preventDefault();
+        var paneId = navMap[navId];
+        // Update nav
+        document.querySelectorAll('.wiki-nav-links .wiki-nav-link').forEach(function(l){ l.classList.remove('active'); });
+        this.classList.add('active');
+        // Update tab panes
+        document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+        document.getElementById(paneId) && document.getElementById(paneId).classList.add('active');
+        // Scroll to top
+        window.scrollTo(0, 0);
+      });
+    });
 
     document.getElementById('search-input') && document.getElementById('search-input').addEventListener('focus', function(){
       if(typeof bootstrap !== 'undefined') new bootstrap.Modal(document.getElementById('searchModal')).show();
@@ -313,7 +573,7 @@
       var semantic = document.getElementById('semantic-search').checked;
       if(!q) return;
       var searchResults = document.getElementById('search-results');
-      searchResults.innerHTML = '<div class="text-center py-3"><div class="spinner-border text-secondary" role="status"></div></div>';
+      searchResults.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-secondary" role="status" style="width:1.5rem;height:1.5rem;"></div><p class="text-muted mt-2 small">搜索中…</p></div>';
       if(typeof bootstrap !== 'undefined') {
         var modalEl = document.getElementById('searchModal');
         bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl).show();
@@ -324,10 +584,10 @@
         .then(function(r){ return r.json(); })
         .then(function(data){
           if(data.results.length === 0) {
-            searchResults.innerHTML = '<p class="text-muted text-center py-3">未找到匹配结果</p>';
+            searchResults.innerHTML = '<p class="text-muted text-center py-4">未找到匹配结果</p>';
             return;
           }
-          var html = '<p class="text-muted small mb-2">' + data.total + ' 个结果</p>';
+          var html = '<p class="text-muted small mb-3">' + data.total + ' 个结果</p>';
           html += '<div class="list-group">';
           for(var i=0; i<data.results.length; i++){
             var r = data.results[i];
@@ -338,9 +598,271 @@
           html += '</div>';
           searchResults.innerHTML = html;
         })
-        .catch(function(){ searchResults.innerHTML = '<p class="text-muted text-center py-3">搜索失败</p>'; });
+        .catch(function(){ searchResults.innerHTML = '<p class="text-muted text-center py-4">搜索失败，请重试</p>'; });
     }
   </script>
   {% block scripts %}{% endblock %}
+
+  <!-- ── Penrose Tiling Background (Light/Dark Theme) ────────── -->
+  <script>
+  (function(){
+    'use strict';
+
+    /* ====== Theme color palettes ====== */
+    var THEMES = {
+      light: {
+        bg: '#fdfbf7',
+        lineRed:   'rgba(200,140,100,0.10)',
+        lineGreen: 'rgba(140,170,130,0.10)',
+        fillThick: 'rgba(210,180,130,0.025)',
+        fillThin:  'rgba(160,180,210,0.025)',
+        lineWidth: 0.8,
+        maxDpr: 1.5
+      },
+      dark: {
+        bg: '#1a1a1e',
+        lineRed:   'rgba(220,160,100,0.12)',
+        lineGreen: 'rgba(120,180,140,0.10)',
+        fillThick: 'rgba(200,160,80,0.03)',
+        fillThin:  'rgba(100,160,200,0.03)',
+        lineWidth: 0.8,
+        maxDpr: 1.5
+      }
+    };
+
+    function getCurrentTheme(){
+      return document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light';
+    }
+
+    var CFG = {
+      scale: 58,
+      parallax: 0.30,
+      damping: 0.20,
+      gamma: [0.12, -0.23, 0.07, 0.31, -0.27],
+    };
+
+    /* ζ^j unit vectors */
+    var ZJ = [];
+    for (var j = 0; j < 5; j++) {
+      var t = 2 * Math.PI * j / 5;
+      ZJ.push([Math.cos(t), Math.sin(t)]);
+    }
+
+    /* normalize γ so Σγ = 0 */
+    (function(){
+      var s = CFG.gamma.reduce(function(a,b){return a+b;},0)/5;
+      for (var i = 0; i < 5; i++) CFG.gamma[i] -= s;
+    })();
+
+    /* ====== DOM init ====== */
+    var bgLayer = document.getElementById('penrose-bg');
+    if (!bgLayer) {
+      bgLayer = document.createElement('div');
+      bgLayer.id = 'penrose-bg';
+      bgLayer.setAttribute('aria-hidden','true');
+      document.body.insertBefore(bgLayer, document.body.firstChild);
+    }
+
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText = 'display:block;width:100%;height:100%';
+    bgLayer.appendChild(canvas);
+
+    var ctx = canvas.getContext('2d', {alpha:false});
+
+    /* ====== Viewport sizing ====== */
+    var vw = 0, vh = 0, dpr = 1;
+
+    function measure(){
+      dpr = Math.min(window.devicePixelRatio||1, THEMES[getCurrentTheme()].maxDpr);
+      vw = bgLayer.clientWidth || window.innerWidth;
+      vh = bgLayer.clientHeight || window.innerHeight;
+      var pw = Math.round(vw*dpr), ph = Math.round(vh*dpr);
+      if (canvas.width!==pw || canvas.height!==ph){
+        canvas.width = pw; canvas.height = ph;
+      }
+    }
+
+    /* ====== Core: compute Penrose tiles ====== */
+    function computePattern(gamma, x0, x1, y0, y1){
+      var mR = [];
+      for (var j = 0; j < 5; j++){
+        var ux = ZJ[j][0], uy = ZJ[j][1];
+        var v00 = ux*x0+uy*y0, v10 = ux*x1+uy*y0;
+        var v01 = ux*x0+uy*y1, v11 = ux*x1+uy*y1;
+        var mn = Math.min(v00,v10,v01,v11), mx = Math.max(v00,v10,v01,v11);
+        mR.push([Math.floor(mn+gamma[j])-1, Math.ceil(mx+gamma[j])+1]);
+      }
+
+      var out = [];
+      for (var r = 0; r < 5; r++){
+        for (var s = r+1; s < 5; s++){
+          var cr=ZJ[r][0], sr=ZJ[r][1], cs=ZJ[s][0], ss=ZJ[s][1];
+          var D = cr*ss - cs*sr;
+          if (Math.abs(D)<1e-9) continue;
+          var a0=mR[r][0], a1=mR[r][1], b0=mR[s][0], b1=mR[s][1];
+          if (a1-a0>900||b1-b0>900) continue;
+          for (var mr=a0; mr<=a1; mr++){
+            var A = mr - gamma[r];
+            for (var ms=b0; ms<=b1; ms++){
+              var B = ms - gamma[s];
+              var px = (A*ss - B*sr)/D;
+              var py = (cr*B - cs*A)/D;
+              if (px<x0||px>x1||py<y0||py>y1) continue;
+              var k=[0,0,0,0,0];
+              k[r]=mr; k[s]=ms;
+              for (var jj=0; jj<5; jj++){
+                if (jj===r||jj===s) continue;
+                var v = ZJ[jj][0]*px+ZJ[jj][1]*py+gamma[jj];
+                var rv = Math.round(v);
+                k[jj] = (Math.abs(v-rv)<1e-9)?rv:Math.ceil(v);
+              }
+              var wx=0,wy=0,idx=0;
+              for (var jj=0; jj<5; jj++){
+                wx+=k[jj]*ZJ[jj][0]; wy+=k[jj]*ZJ[jj][1]; idx+=k[jj];
+              }
+              out.push(wx,wy,r,s,idx);
+            }
+          }
+        }
+      }
+      return out;
+    }
+
+    /* ====== Render ====== */
+    function render(offsetY){
+      var theme = THEMES[getCurrentTheme()];
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.fillStyle = theme.bg;
+      ctx.fillRect(0,0,vw,vh);
+
+      var sc = CFG.scale;
+      var anchorX = vw*0.5;
+      var anchorY = vh*0.5 - offsetY;
+
+      var wx0=(0-anchorX)/sc, wx1=(vw-anchorX)/sc;
+      var wy0=(anchorY-vh)/sc, wy1=anchorY/sc;
+
+      var K=0.4, PAD=6;
+      var zx0=K*wx0-PAD, zx1=K*wx1+PAD;
+      var zy0=K*wy0-PAD, zy1=K*wy1+PAD;
+
+      var tiles = computePattern(CFG.gamma, zx0, zx1, zy0, zy1);
+      if (tiles.length===0) return;
+
+      var pathThick = new Path2D();
+      var pathThin = new Path2D();
+      var pathRed = new Path2D();
+      var pathGreen = new Path2D();
+
+      var toSX = function(wx){return anchorX+wx*sc;};
+      var toSY = function(wy){return anchorY-wy*sc;};
+
+      for (var t=0; t<tiles.length; t+=5){
+        var wx=tiles[t], wy=tiles[t+1];
+        var r=tiles[t+2], q=tiles[t+3], idx=tiles[t+4];
+        var ax=ZJ[r][0], ay=ZJ[r][1];
+        var bx=ZJ[q][0], by=ZJ[q][1];
+
+        var X0=toSX(wx), Y0=toSY(wy);
+        var X1=toSX(wx+ax), Y1=toSY(wy+ay);
+        var X2=toSX(wx+ax+bx), Y2=toSY(wy+ay+by);
+        var X3=toSX(wx+bx), Y3=toSY(wy+by);
+
+        var minX=Math.min(X0,X1,X2,X3), maxX=Math.max(X0,X1,X2,X3);
+        var minY=Math.min(Y0,Y1,Y2,Y3), maxY=Math.max(Y0,Y1,Y2,Y3);
+        if (maxX<-24||minX>vw+24||maxY<-24||minY>vh+24) continue;
+
+        var d = q-r;
+        var p = (d===1||d===4)?pathThick:pathThin;
+        p.moveTo(X0,Y0); p.lineTo(X1,Y1); p.lineTo(X2,Y2); p.lineTo(X3,Y3); p.closePath();
+
+        var ex=[X0,X1,X2,X3], ey=[Y0,Y1,Y2,Y3];
+        var ei=[idx,idx+1,idx+2,idx+1];
+        for (var e=0; e<4; e++){
+          var ia=ei[e], ib=ei[(e+1)&3];
+          var lo=ia<ib?ia:ib, hi=ia<ib?ib:ia;
+          var target=null;
+          if (lo===2&&hi===3) target=pathRed;
+          else if ((lo===1&&hi===2)||(lo===3&&hi===4)) target=pathGreen;
+          if (!target) continue;
+          var e2=(e+1)&3;
+          target.moveTo(ex[e],ey[e]); target.lineTo(ex[e2],ey[e2]);
+        }
+      }
+
+      ctx.lineJoin='round'; ctx.lineCap='round';
+      ctx.fillStyle=theme.fillThick; ctx.fill(pathThick);
+      ctx.fillStyle=theme.fillThin; ctx.fill(pathThin);
+      ctx.lineWidth=theme.lineWidth;
+      ctx.strokeStyle=theme.lineRed; ctx.stroke(pathRed);
+      ctx.strokeStyle=theme.lineGreen; ctx.stroke(pathGreen);
+    }
+
+    /* ====== Parallax scroll drive ====== */
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var PARALLAX = reduceMotion ? 0 : CFG.parallax;
+
+    var targetOffset=0, currentOffset=0, running=false, rafId=0;
+
+    function readScroll(){
+      var y = window.pageYOffset||document.documentElement.scrollTop||0;
+      targetOffset = y*PARALLAX;
+    }
+
+    function loop(){
+      var diff = targetOffset - currentOffset;
+      if (Math.abs(diff)<0.4){
+        currentOffset=targetOffset; render(currentOffset);
+        running=false; rafId=0; return;
+      }
+      currentOffset += diff*CFG.damping;
+      render(currentOffset);
+      rafId=requestAnimationFrame(loop);
+    }
+
+    function kick(){
+      if (running) return;
+      running=true;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId=requestAnimationFrame(loop);
+    }
+
+    function onScroll(){readScroll();kick();}
+
+    window.addEventListener('scroll', onScroll, {passive:true});
+
+    var resizeTimer=0;
+    function onResize(){
+      clearTimeout(resizeTimer);
+      resizeTimer=setTimeout(function(){
+        measure(); readScroll(); currentOffset=targetOffset; render(currentOffset);
+      },80);
+    }
+    window.addEventListener('resize', onResize);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', onResize);
+
+    document.addEventListener('visibilitychange', function(){
+      if (document.hidden && rafId){cancelAnimationFrame(rafId);rafId=0;running=false;}
+      else if (!document.hidden) onScroll();
+    });
+
+    if (window.MutationObserver){
+      new MutationObserver(function(){
+        if (!document.body.contains(bgLayer)){
+          document.body.insertBefore(bgLayer, document.body.firstChild);
+        }
+      }).observe(document.body, {childList:true});
+    }
+
+    /* ====== Start ====== */
+    measure(); readScroll(); currentOffset=targetOffset; render(currentOffset);
+
+    /* ====== Expose API for theme toggle ====== */
+    window.__penrose_bg = {
+      redraw: function(){ render(currentOffset); },
+      config: CFG
+    };
+  })();
+  </script>
 </body>
 </html>
