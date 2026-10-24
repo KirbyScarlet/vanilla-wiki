@@ -1,0 +1,60 @@
+{
+  "src": "base.png",
+  "w": 640,
+  "h": 800,
+  "eyes": [
+    {
+      "lid": {
+        "src": "lid_L.png",
+        "x": 195.18,
+        "y": 335.15,
+        "w": 61,
+        "h": 90
+      },
+      "line": {
+        "src": "line_L.png",
+        "x": 191.33,
+        "y": 331.3,
+        "w": 69,
+        "h": 98,
+        "arcC": 412.46
+      },
+      "top": 336.01,
+      "bottom": 424.61
+    },
+    {
+      "lid": {
+        "src": "lid_R.png",
+        "x": 350.99,
+        "y": 336.01,
+        "w": 61,
+        "h": 90
+      },
+      "line": {
+        "src": "line_R.png",
+        "x": 347.14,
+        "y": 332.16,
+        "w": 69,
+        "h": 98,
+        "arcC": 413.31
+      },
+      "top": 336.86,
+      "bottom": 425.47
+    }
+  ],
+  "anchors": {
+    "headTop": 10.7,
+    "hairTip": 515.78,
+    "eyeTop": 338.15,
+    "eyeBottom": 425.9,
+    "chin": 496.52,
+    "neck": 515.78,
+    "shoulder": 554.31,
+    "waist": 624.93,
+    "skirtTop": 622.79,
+    "skirtBottom": 689.14,
+    "legsBottom": 759.76,
+    "feet": 789.73,
+    "axisX": 303.48
+  }
+}

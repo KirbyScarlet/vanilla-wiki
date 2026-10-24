@@ -177,3 +177,5 @@ static/js/bootstrap*
 static/css/bootstrap*
 docs/
 config.yaml
+# 本地临时试验（脚本 / 截图 / node_modules）
+.scratch/

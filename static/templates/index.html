@@ -9,7 +9,7 @@
     <!-- Hero -->
     <div class="hero-section py-5 py-md-5">
       <div class="text-center fade-in">
-        <div class="hero-emoji mb-3">(^・ω・^ )</div>
+        <div class="hero-mascot mb-3" data-kabibi>(^・ω・^ )</div>
         <h1 class="hero-title fw-bold" style="font-size:2.25rem; color:var(--vanilla-text); margin-bottom:0.75rem; letter-spacing:-0.02em;">
           Vanilla Wiki
         </h1>
@@ -140,10 +140,26 @@
   .hero-section {
     padding: 3rem 1rem 2rem;
   }
-  .hero-emoji {
+  .hero-mascot {
+    /* 立绘加载前用颜文字兜底，加载后由 kabibi-live2d.js 换成 canvas */
+    height: 218px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
     font-size: 2.5rem;
     line-height: 1;
-    opacity: 0.85;
+    opacity: 0.9;
+    color: var(--vanilla-text-secondary);
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hero-mascot canvas {
+    display: block;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0.95;
+    filter: drop-shadow(0 6px 14px rgba(45, 42, 38, 0.12));
   }
   .hero-title {
     font-weight: 700;
@@ -252,7 +268,7 @@
 
   @media (max-width: 767.98px) {
     .hero-section { padding: 2rem 0.5rem 1.5rem; }
-    .hero-emoji { font-size: 2rem; }
+    .hero-mascot { height: 158px; font-size: 2rem; }
     .hero-title { font-size: 1.75rem; }
     .category-search-area { padding: 0 0.5rem; }
   }
@@ -260,6 +276,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="/static/js/kabibi-live2d.js"></script>
 <script>
   // ── Health check ─────────────────────────────────────
   fetch("/api/health")
